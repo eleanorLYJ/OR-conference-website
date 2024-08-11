@@ -1,23 +1,26 @@
-# miduConf
+# OR-conference-website
 
-## Descripción del Proyecto
+## Project Description
 
-Este proyecto es el código fuente del sitio web oficial de **miduConf**, una conferencia de programación y desarrollo web en español que se celebrará el **12 de septiembre de 2024**. El sitio web se desarrolla utilizando Next.js y tiene como objetivo informar a los asistentes y a la comunidad en general sobre los detalles de la conferencia, incluidos los oradores, el horario, los regalos y sorteos, y cómo registrarse para el evento.
+This project is modifed from the source code for the official website of **miduConf**, a Spanish language programming and web development conference.
 
-## Prerrequisitos
+ The website is developed using Next.js and aims to inform attendees and the community at large about the conference details, including speakers, schedule, and how to register for the event.
+
+## Prerequisites
 
 - Node.js
 - npm
 
-## Instalación y Configuración
+## Installation and Configuration
 
-1. Clona el repositorio.
-2. Ejecuta `npm install` para instalar las dependencias.
-3. Ejecuta `npm run dev` para iniciar el servidor de desarrollo.
+1. Clone the repository.
+2. Run `npm install` to install the dependencies.
+3. Run `npm run dev` to start the development server.
 
-## Cómo Probar el Proyecto
+## How to Test the Project
 
-Para probar el proyecto, sigue estos pasos:
+To test the project, follow these steps:
 
-1. Ejecuta `npm run test` para ejecutar las pruebas unitarias (si las hay).
-2. Abre el navegador y navega a `http://localhost:3000`.
+1. Run `npm run test` to run the unit tests (if any).
+2. Open your browser and navigate to `http://localhost:3000`.
+

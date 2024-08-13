@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useRemainingTime } from '../hooks/useRemainingTime'
 
-const LITERALS = ['Días', null, 'Horas', null, 'Minutos', null, 'Segundos']
+const LITERALS = ['Day', null, 'Hour', null, 'Minute', null, 'Sec']
 
 export function Countdown() {
 	const { seconds, minutes, hours, days } = useRemainingTime(new Date(1726153200000), {

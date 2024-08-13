@@ -1,36 +1,31 @@
 import Head from 'next/head'
-
 import { GeistSans } from 'geist/font/sans'
-
-import { Background } from '@/components/Background'
 import { Countdown } from '@/components/Countdown'
 import { Header } from '@/components/Header'
-import { Meteors } from '@/components/MeteorLanguages'
 import { Speakers } from '@/components/Speakers'
-import { Stars } from '@/components/Stars'
 import { Agenda } from '@/sections/agenda'
-import { Gifts } from '@/sections/gifts'
-import { Sponsors } from '@/sections/sponsors'
 import { TicketHome } from '@/sections/ticket-home'
-import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
+import { query } from '@/lib/pg'
+import { PageBackground } from '@/components/PageBackground'
 
 const PREFIX_CDN = 'https://ljizvfycxyxnupniyyxb.supabase.co/storage/v1/object/public/tickets'
 
-const title = 'miduConf - La conferencia de programación y desarrollo'
-const description =
-	'Conferencia de programación y tecnología para el día del programador y la programadora'
+const title = '2024 OR conference '
+const description =	'2024 OR conference'
 const defaultOgImage = '/og-image.jpg'
-const url = 'https://miduconf.com'
+const url = ''  // todo
 
 export default function Home({ username, flavor, ticketNumber, burst }) {
+	// if we have a username, we use the ticket image, otherwise we use the default og image
 	const ogImage = username
 		? `${PREFIX_CDN}/ticket-${ticketNumber}.jpg?c=${burst}`
 		: `${url}${defaultOgImage}`
 
+
 	return (
 		<>
 			<Head>
-				<title>miduConf - La conferencia de programación y desarrollo</title>
+				<title>2024 OR conference(在index.js)</title>
 				<meta name='description' content={description} />
 				<meta property='og:image' content={ogImage} />
 				<meta property='twitter:image' content={ogImage} />
@@ -48,57 +43,49 @@ export default function Home({ username, flavor, ticketNumber, burst }) {
 			<Header />
 
 			<main className={`${GeistSans.className}`}>
-				<section className='relative px-4 pb-20 before:bg-gradient-to-b before:from-[#020617] before:via-[#020617] before:-z-10 before:inset-0 before:to-[#0B217D] before:size-full before:absolute border-b border-midu-primary inset-0 m-auto'>
-					<Stars />
-					<Meteors />
-					<Background />
+				<PageBackground>
 					<div className='max-w-5xl mx-auto'>
 						<h2 className='animate-fade-in-up text-6xl md:text-[80px] mx-auto text-center max-w-[20ch] text-white font-bold pt-40'>
-							Conoce el <span className='text-midu-primary'>futuro</span> del{' '}
-							<span className='text-midu-primary'>desarrollo</span> web
+							Operation Research Conference <span className='text-midu-primary'>in NCKU</span>
 						</h2>
-
 						<TicketHome ticketNumber={ticketNumber} initialFlavor={flavor} username={username} />
+						<h3 className='text-2xl font-bold mb-6 text-center max-w-[20ch] text-white font-bold'>
+							Submission countdown
+						</h3>
 						<Countdown />
 					</div>
-				</section>
+				</PageBackground>
 				<Speakers />
-				<Sponsors />
-				<Gifts />
 				<Agenda />
 			</main>
 		</>
 	)
 }
-
+// 
 export const getServerSideProps = async (ctx) => {
-	// read query parameter
 	const { ticket } = ctx.query
-	// create supabase client
-	const supabase = createPagesServerClient(ctx)
-	// if no ticket, return empty props
+  
 	if (!ticket) {
+	  return { props: {} }
+	}
+  
+	try {
+	  const result = await query('SELECT * FROM ticket WHERE user_name = $1', [ticket])
+  
+	  if (result.rows.length > 0) {
+		const row = result.rows[0]
 		return {
-			props: {}
+		  props: {
+			burst: crypto.randomUUID(),
+			ticketNumber: row.ticket_number,
+			username: row.user_name,
+			flavor: row.flavour
+		  }
 		}
+	  }
+	} catch (err) {
+	  console.error('Database query error', err)
 	}
-
-	// search ticket for user
-	const { data, error } = await supabase.from('ticket').select('*').eq('user_name', ticket)
-	// check if we have results
-
-	if (data.length > 0 && !error) {
-		return {
-			props: {
-				burst: crypto.randomUUID(),
-				ticketNumber: data[0].ticket_number,
-				username: data[0].user_name,
-				flavor: data[0].flavour
-			}
-		}
-	}
-
-	return {
-		props: {}
-	}
+  
+	return { props: {} }
 }

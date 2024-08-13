@@ -3,12 +3,15 @@
 import { MiduLogo } from '@/components/logos/midudev'
 import { NavbarIcons } from '@/components/icons/navbar'
 import { Button } from '@/components/Button'
-import { useId, useState } from 'react'
+import { useId, useState, useContext, useEffect } from 'react'
 import { cn } from '@/lib/utils'
+import Link from 'next/link'
+import { useSession, signOut } from 'next-auth/react';
 
 export function Header() {
 	const [isNavbarOpen, setIsNavbarOpen] = useState(false)
 	const navbarId = useId()
+	const { data: session, status } = useSession();
 
 	return (
 		<header className='header-animate backdrop-blur-[10px] md:backdrop-blur-0 w-full mb-10 overflow-hidden z-[99999] py-8'>
@@ -47,45 +50,25 @@ export function Header() {
 						))}
 					</ul>
 				</nav>
-				<div className='flex items-center gap-4 mr-4 md:ml-auto'>
-					<Button
-						as='a'
-						href='https://discord.gg/midudev'
-						className='ml-auto font-medium'
-						title='Únete al Discord de la comunidad'
-						aria-label='Únete al Discord de la comunidad'
-					>
-						<NavbarIcons.DiscordLogo />
-						Discord
-					</Button>
-					<button
-						className='flex items-center justify-center py-2 md:hidden'
-						onClick={() => setIsNavbarOpen(!isNavbarOpen)}
-						aria-expanded='false'
-						aria-controls={navbarId}
-						title='Mostrar Menú'
-						aria-label='Mostrar menú'
-					>
-						<div className='flex items-center justify-center p-2 cursor-pointer group'>
-							<div className='space-y-2'>
-								<span
-									className={cn(
-										'block h-1 w-8 origin-center rounded-full bg-white/60 transition-transform ease-in-out',
-										{ 'translate-y-1.5 rotate-45': isNavbarOpen }
-									)}
-								></span>
-								<span
-									className={cn(
-										'block h-1 w-8 origin-center rounded-full bg-white/60 transition-transform ease-in-out',
-										{
-											'w-8 -translate-y-1.5 -rotate-45': isNavbarOpen
-										}
-									)}
-								></span>
-							</div>
-						</div>
-					</button>
+			{/* Conditionally render login/signup based on authentication state */}
+			{!session && ( // Hide if logged in
+          		<>
+					<Link href="/login" className="hidden md:block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+						Login
+					</Link>
+					<Link href="/signup" className="hidden md:block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+						Sign Up
+					</Link>
+         		 </>
+       		 )} 
+			{/* Optionally display user profile if logged in */}
+				{session && (
+          		<div className="hidden md:block">
+					<span className="text-white mr-4">Hi, {session.user.name}!</span>
+					<button className="text-white underline" onClick={() => signOut()}>Logout</button>
+					{/* <Link href="" className="text-white underline">Logout</Link> */}
 				</div>
+        )}
 			</div>
 		</header>
 	)
@@ -93,22 +76,12 @@ export function Header() {
 
 const NAV_ITEMS = [
 	{
-		href: '#speakers',
+		href: '/#speakers',
 		title: 'Speakers',
 		Icon: NavbarIcons.SpeakersIcon
 	},
 	{
-		href: '#sponsors',
-		title: 'Patrocinadores',
-		Icon: NavbarIcons.SponsorsIcon
-	},
-	{
-		href: '#regalos',
-		title: 'Regalos',
-		Icon: NavbarIcons.GiftIcon
-	},
-	{
-		href: '#agenda',
+		href: '/#agenda',
 		title: 'Agenda',
 		Icon: NavbarIcons.ScheduleIcon
 	}

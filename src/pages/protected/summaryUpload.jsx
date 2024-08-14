@@ -11,15 +11,14 @@ export default function SummaryUpload() {
   const [title, setTitle] = useState('');
   const router = useRouter();
   const [selectedFile, setSelectedFile] = useState(null);
-  const [showMessage, setShowMessage] = useState(false);
 
-const handleTitleChange = (e) => {
-  if (e && e.target && typeof e.target.value !== 'undefined') {
-    setTitle(e.target.value);
-  } else {
-    console.error('Invalid event object in handleTitleChange:', e);
-  }
-};
+  // const handleTitleChange = (e) => {
+  //   if (e?.target?.value) {
+  //     setTitle(e.target.value);
+  //   } else {
+  //     console.error('Invalid event object in handleTitleChange:', e);
+  //   }
+  // };
   const handleAuthorChange = (index, value) => {
     const newAuthors = [...authors];
     newAuthors[index] = value;
@@ -43,7 +42,7 @@ const handleTitleChange = (e) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('authors', JSON.stringify(authors));
-    formData.append('submitter', submitter);
+    console.log("formData", formData)
 
     try {
       const response = await fetch('/api/uploadSummary', {
@@ -73,10 +72,11 @@ const handleTitleChange = (e) => {
       {error && <p className="text-red-500">{error}</p>}
       <form onSubmit={handleSubmit} encType="multipart/form-data">
       <input
+            key={0}
             type="text"
             placeholder={`Title *`}
             value={title}
-            onChange={handleTitleChange}
+            onChange={(e) => setTitle(e.target.value)}
             className="mb-4 p-2 border rounded w-full"
             required
           />
@@ -84,30 +84,22 @@ const handleTitleChange = (e) => {
             key={1}
             type="text"
             placeholder={`Author ${1} *`}
-            value={authors[0]}
+            value={authors[0] || '' } // Use an empty string if undefined
             onChange={(e) => handleAuthorChange(0, e.target.value)}
             className="mb-4 p-2 border rounded w-full"
             required
           />
         {[1, 2, 3, 4].map((index) => (
           <input
-          key={index}
+          key={index+1}
           type="text"
-          placeholder={`Author ${index + 2}`}
+          placeholder={`Author ${index + 1}`}
           value={authors[index]}
           onChange={(e) => handleAuthorChange(index, e.target.value)}
           className="mb-4 p-2 border rounded w-full"
         />
         ))}
         <p className="text-sm text-gray-500">You regard as the corresponding author</p>
-        {/* <input
-          type="text"
-          placeholder="Submitter *"
-          value={submitter}
-          onChange={(e) => setSubmitter(e.target.value)}
-          className="mb-4 p-2 border rounded w-full"
-          required
-        /> */}
         {/* <p className="text-sm text-gray-500">Same as submitter (yes/no)</p> */}
         
         <input

@@ -16,26 +16,25 @@ export default async function handler(req, res) {
     `;
 
     const createDocumentsTable = `
-      CREATE TABLE IF NOT EXISTS documents (
+        CREATE TABLE public.documents (
         id SERIAL PRIMARY KEY,
-        user_id INTEGER REFERENCES users(id),
-        file_path TEXT NOT NULL,
         file_name VARCHAR(255) NOT NULL,
+        file_path TEXT NOT NULL,
+        user_id INTEGER REFERENCES users(id),
+        authors TEXT,
+        title TEXT,
         uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
+        );
     `;
-    // 1
-    // const alterDocumentsTable = `
-    // ALTER TABLE documents 
-    //     ADD COLUMN authors TEXT;
-    // `
+    // console.log('Attempting to create documents table');
+    // await pool.query(createDocumentsTable);
+    // console.log('Documents table created successfully');
     
-    // // 2
-    // const alterDocumentsTable = `
-    // ALTER TABLE documents 
-    //     ADD COLUMN title TEXT;
-    // `
-    console.log(await pool.query(alterDocumentsTable))
+    const showDocuments = `
+    SELECT * FROM documents;
+    `
+    console.log(await pool.query(showDocuments))
+
     // console.log(await pool.query("UPDATE users SET role = 'admin' WHERE username = 'test'"))
     // console.log(await pool.query('select * from users'))
     // await pool.query(createUsersTable);

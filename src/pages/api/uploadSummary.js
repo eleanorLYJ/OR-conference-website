@@ -1,12 +1,8 @@
-import fs from 'fs';
+import fs from 'fs/promises'; // Use promises for file operations
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
-import formidable from 'formidable';
-import { Pool } from 'pg';
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+import { IncomingForm } from 'formidable';
+import { pool } from '@/lib/pg';
+import { getSession } from "next-auth/react";
 
 export const config = {
   api: {
@@ -18,55 +14,74 @@ export default async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
-
-  const form = formidable({ 
+  const session = await getSession({ req })
+  if (!session) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  // 確保上傳目錄存在
+  const uploadsDir = path.join(process.cwd(), 'uploads');
+  try {
+    await fs.mkdir(uploadsDir, { recursive: true });
+    console.log('Uploads directory ensured');
+  } catch (err) {
+    console.error('Error ensuring uploads directory:', err);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+  const form = new IncomingForm({
     uploadDir: './uploads',
     keepExtensions: true,
-    maxFileSize: 5 * 1024 * 1024, // 5MB
+    maxFileSize: 100 * 1024 * 1024, // 100MB
   });
-
-  // Ensure 'uploads' directory exists
-  if (!fs.existsSync('./uploads')) {
-    fs.mkdirSync('./uploads');
-  }
 
   form.parse(req, async (err, fields, files) => {
     if (err) {
       console.error('Error parsing form:', err);
-      return res.status(500).json({ message: 'File upload error' });
+      return res.status(500).json({ message: 'File size over 100MB' }); // reason over big 
     }
 
-    const authors = JSON.parse(fields.authors);
-    const submitter = fields.submitter;
+  try {
+    const { authors, title } = fields;
     const file = files.file;
 
     if (!file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
-    const title = fields.title;
+
     const originalFilename = file.originalFilename;
-    const uniqueFilename = `${uuidv4()}_${originalFilename}`;
-    const oldPath = file.filepath || file.path;  // correct path reference
+    const uniqueFilename = `${Date.now()}_${originalFilename}`;
+    const oldPath = file.filepath || file.path || file[0]?.filepath || file[0]?.path;
+
     const newPath = path.join(form.uploadDir, uniqueFilename);
 
-    fs.rename(oldPath, newPath, async (err) => {
-      if (err) {
-        console.error('Error saving file:', err);
-        return res.status(500).json({ message: 'File save error' });
-      }
+      await fs.rename(oldPath, newPath);
 
+      const client = await pool.connect();
       try {
-        const client = await pool.connect();
-        await client.query(
-          'INSERT INTO documents (file_name, file_path, user_id, authors, title) VALUES ($1, $2, $3, $4, $5)',
-          [uniqueFilename, newPath, submitter, authors, title]
+        await client.query('BEGIN'); // Start a transaction
+
+        console.log('Parsed user ID:', session.user.id);
+        if (isNaN(session.user.id)) {
+          throw new Error('Invalid user ID');
+        }
+        const result = await client.query(
+          'INSERT INTO documents (file_name, file_path, user_id, authors, title) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+          [uniqueFilename, newPath, session.user.id, authors, title]
         );
-        client.release();
-        return res.status(200).json({ message: 'File uploaded successfully' });
+        console.log("result", result)
+        await client.query('COMMIT'); // Commit the transaction
+        console.log("successfully uploaded: fileId", result.rows[0].id, "file_name", uniqueFilename, "file_path", newPath, "user_id", session.user.id, "authors", authors, "title", title)
+        return res.status(200).json({ message: 'File uploaded successfully', fileId: result.rows[0].id });
       } catch (dbError) {
+        await client.query('ROLLBACK'); // Rollback on error
         console.error('Database error:', dbError);
         return res.status(500).json({ message: 'Database error' });
       }
-    });
+      finally {
+        client.release();
+      } 
+    }catch (err) {
+      console.error('Error saving file:', err);
+      return res.status(500).json({ message: 'File save error' });
+    }
   });
 };

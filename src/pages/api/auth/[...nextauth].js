@@ -12,11 +12,10 @@ export default NextAuth({
       async authorize(credentials) {
         // Implement your own logic here to verify user credentials
         const user = await findUserByEmailAndPassword(credentials.email, credentials.password);
-        console.log('Authorized user() in auth:', user);
         if (user) {
           return { 
 			id: user.id,
-			name: user.username || 'Default Name',
+			name: user.username,
 			email: user.email,
 			role: user.role,
 		 };
@@ -48,7 +47,6 @@ export default NextAuth({
 
   callbacks: {
 	async jwt({ token, user, account }) {
-		console.log('JWT Callback:', { token, user, account });
 		// if (user) {
 		//   token.id = user.id;
 		//   token.name = user.name; // Ensure the name is being set here

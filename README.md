@@ -76,3 +76,18 @@ unhandledRejection: TypeError [ERR_INVALID_ARG_TYPE]: The "oldPath" argument mus
 
 ## 結構:
 _app.tsx 是 Next.js 應用程序的入口點。它用於初始化頁面，並在所有頁面之間共享通用功能。
+
+
+## auth
+NextAuth Configuration:
+
+- providers: This is where you define how users can log in. In this case, you're using the CredentialsProvider, which allows users to log in with an email and password.
+
+- authorize: This function is part of the CredentialsProvider. It handles the logic for verifying user credentials. It checks if the user exists by calling findUserByEmailAndPassword. If a user is found, it returns the user object (with id, name, and email). Otherwise, it returns null.
+
+- pages: Customizes the paths to the sign-in and error pages. You've specified that if a sign-in fails, it redirects to /login.
+
+- session: By setting strategy: "jwt", you're using JSON Web Tokens (JWT) to manage sessions. This means session information is stored in a token on the client-side rather than in a server-side session.
+
+- Callbacks: (Commented Out)
+jwt: This callback is used to manage the JWT token. When a user logs in, you can attach custom properties (like id and role) to the token. This information will then be available in the session.

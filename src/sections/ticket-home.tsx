@@ -12,7 +12,7 @@ export const TicketHome = ({ ticketNumber, username, initialFlavor }) => {
 	const [number, setNumber] = useState(ticketNumber ?? 0)
 	
 	const handleUpload = () => {
-		router.push('/summaryUpload'); // Redirect to summaryUpload page
+		router.push('/protected/summaryUpload'); // Redirect to summaryUpload page
 	  };
 	
 	  useEffect(() => {

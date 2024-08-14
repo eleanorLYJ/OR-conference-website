@@ -42,6 +42,7 @@ export default function SummaryUpload() {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('authors', JSON.stringify(authors));
+    formData.append('title', title);
     console.log("formData", formData)
 
     try {

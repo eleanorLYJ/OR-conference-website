@@ -1,4 +1,4 @@
-import { useState, useContext  } from 'react';
+import { useState, useEffect  } from 'react';
 import { useRouter } from 'next/router';
 import { GeistSans } from 'geist/font/sans'
 import { PageBackground } from '@/components/PageBackground'
@@ -30,13 +30,20 @@ class ErrorBoundary extends React.Component {
   }
 }
 export default function Login() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter();
+  const [error, setError] = useState('');
+  const [warning, setWarning] = useState('')
 
+  useEffect(() => {
+    if (router.query.warning) {
+      setWarning(router.query.warning)
+    }
+  }, [router.query])
   const handleLogin = async (e) => {
     e.preventDefault();
-
+    setError('');
     const result = await signIn('credentials', {
       redirect: false,
       email,
@@ -46,6 +53,7 @@ export default function Login() {
       router.push('/');
     } else {
       console.error(result.error);
+      setError(result.error);  
     }
   };
 
@@ -53,6 +61,7 @@ export default function Login() {
         
     <ErrorBoundary>
       <PageBackground>
+
       <a
 					href='/'
 					className='ml-4 transition-transform duration-300 hover:scale-125'
@@ -63,7 +72,13 @@ export default function Login() {
 				</a>
       <main className={`${GeistSans.className} min-h-screen flex items-center justify-center`}>
           <div className='w-full max-w-md p-8 bg-white rounded-lg shadow-md'>
+            {warning && (
+              <div className="warning-message" style={{ color: 'red', textAlign: 'center' }}>
+                {warning}
+              </div>
+            )}
             <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
+            {error && <p className="text-red-500 text-center">{error}</p>}
             <form onSubmit={handleLogin} className="space-y-4 m-10">
               <input
                 type="email"

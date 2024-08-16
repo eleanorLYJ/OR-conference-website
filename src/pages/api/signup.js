@@ -6,17 +6,30 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
-    
-    const { username, email, password } = req.body;
+    const { username, email, password, jobTitle, unit, country } = req.body;
+    console.log("user", username, email, password, jobTitle, unit, country)
+    if (!username || !email || !password || !jobTitle || !unit || !country) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
 
+    const User = await pool.query('SELECT * FROM users WHERE username = $1 AND email = $2 AND password_hash IS NULL', [username, email]);
+    if (User.rows.length > 0) {
+      await pool.query(
+        'UPDATE users SET password_hash = $1 WHERE id = $2',
+          [hashedPassword, User.rows[0].id]
+        );
+        return res.status(200).json({ message: 'User updated successfully', userId: User.rows[0].id });
+    }
+    const existingUser = await pool.query('SELECT * FROM users WHERE username = $1 AND email = $2', [username, email]);
+    if (existingUser.rows.length > 0) {
+        return res.status(400).json({ message: 'Username or email already exists'});
+    }
     try {
         console.log('Attempting to hash password');
         const hashedPassword = await bcrypt.hash(password, 10);
-        
-        console.log('Attempting to insert user into database');
         const result = await pool.query(
-          'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id',
-          [username, email, hashedPassword, 'user']
+          'INSERT INTO users (username, email, password_hash, job_title, unit, country, role) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+          [username, email, hashedPassword, jobTitle, unit, country, 'user']
         );
     
         console.log('User inserted successfully', result);

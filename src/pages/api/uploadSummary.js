@@ -42,7 +42,7 @@ export default async (req, res) => {
   try {
     const { authors, title } = fields;
     const file = files.file;
-    console.log("title", title)
+    console.log("extract title: ", title)
     if (!file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }

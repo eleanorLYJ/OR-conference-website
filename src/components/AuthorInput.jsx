@@ -1,114 +1,74 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { PageBackground } from '@/components/PageBackground';
-import { GeistSans } from 'geist/font/sans';
-import { MiduLogo } from '@/components/logos/midudev'
-// 中文英文名*
-// 學校、單位* [V]
-// 職稱* [V]
-// email* [V]
-// password* [V]
-// password* (double check) [V]
-// 聯絡手機 (台灣電話*、國際電話)
-// 地址 *
-export default function Signup() {
-  console.log('Enter Signup');
-  const [chineseName, setChineseName] = useState('');
-  const [englishName, setEnglishName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [unit, setUnit] = useState(''); // input
-  const [jobTitle, setJobTitle] = useState(''); // input
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [country, setCountry] = useState('');
+import React from 'react';
+import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Box from '@mui/material/Box';
 
-  const router = useRouter();
-  const [error, setError] = useState('');
+//  author = {} ，This should prevent the "Cannot read properties of undefined" error.
+const AuthorInput = ({ index, author = {}, onChange, required }) => {
+    const handleChange = (field, value) => {
+        onChange(index, { ...author, [field]: value });
+      };
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    setError('');
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-    try {
-      const response = await fetch('/api/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ chineseName, englishName, email, password, jobTitle, unit, country }),
-      });
-
-      const data = await response.json();
-      console.log('Signup response:', data);
-      if (response.ok) {
-        // Signup successful, redirect to login page
-        console.log('Signup successful', data);
-        router.push('/login');
-      } else {
-        setError(data.message || 'Signup failed');
-      }
-    }
-    catch (error) {
-      console.error('Error during signup:', error);
-      setError('An error occurred during signup');
-    }
-  };
-
-  return (
-    <>
-      <PageBackground>
-        <a
-            href='/'
-            className='ml-4 transition-transform duration-300 hover:scale-125'
-            title='return to homepage'
-            aria-label='return to homepage'
-        >
-          <MiduLogo className='w-20 h-24' />
-        </a>
-        
-        <main className={`${GeistSans.className} min-h-screen flex items-center justify-center`}>
-            <div className='w-full max-w-md p-8 bg-white rounded-lg shadow-md'>
-              <h1 className="text-2xl font-bold mb-6 text-center">Signup</h1>
-              {error && <p className="text-red-500">{error}</p>}
-              <form onSubmit={handleSignup} className="space-y-4 m-10">
-            <input
+      return (
+        <Box sx={{ display: 'flex', flexDirection: 'column', mb: 2 }}>
+        <Accordion sx={{ width: '100%' }}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography>Author {index + 1}{required ? ' *' : ''}</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            '& input': {
+              p: 1,
+              width: '100%',
+              boxSizing: 'border-box',
+            }
+          }}>
+          <input
+            type="text"
+            placeholder="Chinese Name"
+            value={author.ChineseName || ''}
+            onChange={(e) => handleChange('ChineseName', e.target.value)}
+            className="mb-4 p-2 border rounded w-full"
+            required={required}
+          />
+          <input
               type="text"
-              placeholder="Chinese Name *"
-              value={chineseName}
-              onChange={(e) => setChineseName(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="text"
-              placeholder="Enlish Name *"
-              value={englishName}
-              onChange={(e) => setEnglishName(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="unit"
-              placeholder="School/Unit *"
-              value={unit}
-              onChange={(e) => setUnit(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="job "
-              placeholder="Job Title *"
-              value={jobTitle}
-              onChange={(e) => setJobTitle(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <select
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
+              placeholder="English Name,"
+              value={author.EnglishName || ''}
+              onChange={(e) => handleChange('EnglishName', e.target.value)}
+              className="mb-4 p-2 border rounded w-full"
+              required={required}
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={author.email || ''}
+            onChange={(e) => handleChange('email', e.target.value)}
+            className="mb-4 p-2 border rounded w-full"
+            required={required}
+          />
+          <input
+            type="text"
+            placeholder="Job Title"
+            value={author.jobTitle || ''}
+            onChange={(e) => handleChange('jobTitle', e.target.value)}
+            className="mb-4 p-2 border rounded w-full"
+            required={required}
+          />
+          <input
+            type="text"
+            placeholder="Unit"
+            value={author.unit || ''}
+            onChange={(e) => handleChange('unit', e.target.value)}
+            className="mb-4 p-2 border rounded w-full"
+            required={required}
+          />
+          <select
+              value={author.country || ''}
+              onChange={(e) => handleChange('country', e.target.value)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
@@ -358,35 +318,11 @@ export default function Signup() {
               <option value="Zambia">Zambia</option>
               <option value="Zimbabwe">Zimbabwe</option>
             </select>
-            <input
-              type="email"
-              placeholder="Email *"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="password"
-              placeholder="Password *"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="password"
-              placeholder="Confirm Password *"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-              <button class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">Submit</button>
-          </form>
-          </div>
-        </main>
-      </PageBackground>
-    </>
+          </Box>
+        </AccordionDetails>
+      </Accordion>
+    </Box>
   );
-}
+};
+
+export default AuthorInput;

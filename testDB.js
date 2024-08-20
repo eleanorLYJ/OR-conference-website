@@ -45,23 +45,23 @@ async function testDatabase() {
     //   console.log('The "documents" table exists');
       
       // 檢查表結構
-      const tableStructureResult = await client.query(`
-        SELECT column_name, data_type 
-        FROM information_schema.columns 
-        WHERE lower(table_name) = lower('documents');
-      `);
+    //   const tableStructureResult = await client.query(`
+    //     SELECT column_name, data_type 
+    //     FROM information_schema.columns 
+    //     WHERE lower(table_name) = lower('documents');
+    //   `);
       
-      console.log('Table structure:');
-      console.table(tableStructureResult.rows);
+    //   console.log('Table structure:');
+    //   console.table(tableStructureResult.rows);
 
-      // 嘗試查詢數據
-      const queryResult = await client.query('SELECT * FROM documents LIMIT 5');
-      console.log('Sample data:');
-      console.table(queryResult.rows);
+    //   // 嘗試查詢數據
+    //   const queryResult = await client.query('SELECT * FROM documents LIMIT 5');
+    //   console.log('Sample data:');
+    //   console.table(queryResult.rows);
 
-    } else {
-      console.log('The "documents" table does not exist');
-    }
+    // } else {
+    //   console.log('The "documents" table does not exist');
+    // }
 
   } catch (err) {
     console.error('Database test error:', err);

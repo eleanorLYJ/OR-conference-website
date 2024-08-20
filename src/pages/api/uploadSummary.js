@@ -40,7 +40,7 @@ export default async (req, res) => {
     }
 
   try {
-    const { authors, title } = fields;
+    const { authors, title, summary } = fields;
     const file = files.file;
     console.log("extract title: ", title)
     if (!file) {
@@ -64,8 +64,8 @@ export default async (req, res) => {
           throw new Error('Invalid user ID');
         }
         const result = await client.query(
-          'INSERT INTO documents (file_name, file_path, user_id, authors, title) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-          [uniqueFilename, newPath, session.user.id, authors, title]
+          'INSERT INTO documents (file_name, file_path, user_id, authors, title, summary) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+          [uniqueFilename, newPath, session.user.id, authors, title, summary]
         );
         console.log("result", result)
         await client.query('COMMIT'); // Commit the transaction

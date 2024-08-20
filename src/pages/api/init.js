@@ -6,9 +6,10 @@ export default async function handler(req, res) {
     const createUsersTable = `
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
-        username VARCHAR(50) UNIQUE NOT NULL,
+        chinese_name VARCHAR(50) NOT NULL,
+        english_name VARCHAR(50) NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL,
+        password_hash TEXT,
         role VARCHAR(20) NOT NULL CHECK (role IN ('user', 'admin')),
         job_title VARCHAR(100),
         unit VARCHAR(100),
@@ -26,9 +27,11 @@ export default async function handler(req, res) {
         user_id INTEGER REFERENCES users(id),
         authors TEXT,
         title TEXT,
+        summary TEXT,
         uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     `;
+
     // await pool.query('DROP TABLE IF EXISTS documents');
     // await pool.query('DROP TABLE IF EXISTS users');
 
@@ -37,10 +40,10 @@ export default async function handler(req, res) {
     // await pool.query(createDocumentsTable);
     // console.log('Documents table created successfully');
     
-    const showUsers = `
-    SELECT * FROM users;
-    `
-    console.log(await pool.query(showUsers))
+    // const showUsers = `
+    // SELECT * FROM users;
+    // `
+    // console.log(await pool.query(showUsers))
 
     const showDocuments = `
     SELECT * FROM documents;

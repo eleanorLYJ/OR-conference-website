@@ -4,9 +4,11 @@ import { useRemainingTime } from '../hooks/useRemainingTime'
 const LITERALS = ['Day', null, 'Hour', null, 'Minute', null, 'Sec']
 
 export function Countdown() {
-	const { seconds, minutes, hours, days } = useRemainingTime(new Date(1726153200000), {
+	const { seconds, minutes, hours, days } = useRemainingTime(new Date('2024-09-28T00:00:00+08:00'), {
 		fillingZeros: true
-	})
+  })
+  // ... existing code ...
+
 	const [show, setShow] = useState(false)
 
 	useEffect(() => {

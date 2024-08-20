@@ -43,8 +43,8 @@ To test the project, follow these steps:
 4. 將數據庫的所有權限賦予 ncku_iim 用戶：
 `GRANT ALL PRIVILEGES ON DATABASE ncku_iim TO ncku_iim;`
 
-
 `ALTER DATABASE ncku_iim OWNER TO ncku_iim;`
+
 ## init
 啟動你的 Next.js 伺服器，然後在瀏覽器中訪問 http://localhost:3000/api/init。這樣會調用 init.js，並在你的 PostgreSQL 資料庫中創建 Users 和 Documents 表格。
 完成後，你可以刪除或禁用這個路由，以防止它再次被調用。
@@ -59,19 +59,78 @@ JWT_SECRET=your_secret_key_here
 
 NextJs + formidable + Typescript. -> upload files
 uuid -> 通用唯一辨識碼
-
+### 原始專案
 - [ ] TicketHome.jsx 中間一大段沒搞懂， sectoin\ tickect 可以變回 compoent\
 - [ ] (目前 getServerSideProps in index.js 部分未知)
 - [ ] rewrite() in next.conf.js
-- [ ] logout
+### 登入登出
+- [X] logout
+
+- [ ] 忘記密碼的 send email (api) 還沒確定
+- [ ] session 有設時間 expired嗎?
+
+要測: 
+- [ ] 此user還沒註冊，但有其他人幫他投稿 (paper)，那們這user 要確定他註冊成功，並且在 admin 能看見他的 paper
+
+### admins
+- [ ] admin，還需 新增刪除
+
+### 投稿
+- [ ] 多一個頁面，for 不投稿但想要參加，可繳錢
+- [ ]  新增作者資訊、多一個欄位是否是通訊作者 (至少有一位)
+- [ ] submit 部分，可以讓他投多篇
+
+### signup
+中文英文名*
+學校、單位*
+職稱*
+email*
+password*
+password* (double check)
+聯絡手機 (台灣電話*、國際電話)
+地址 *
+
+### 其他
 - [ ] https!
-- [ ] 忘記密碼的 send email (api) 還沒確定 (You will need to ensure that the utility functions (sendEmail, generateTemporaryPassword, findUserByEmailAndUsername, and updateUserPassword) are correctly implemented to interact with your email service, database, and password management logic.)
+
+document 有 user (fk)嗎
+
+
+### route 學習
+我希望 跳轉前先彈跳視窗
+ In Next.js, we can't directly show a popup from the middleware, but we can pass a message to the login page through URL parameters. The login page can then display this message as a warning.
+
+## 規則
+conference
+一篇paper 一定要有一人交錢 (他有名牌) -> 管理部分也要
+一篇可能被兩人繳錢? when 
+
+不繳交摘要的人，也可以交錢
+
+### 繳錢方式
+
+- 需管理頁面、是否繳錢
+
+給他們 document id ，不論 通訊作者或斜作者繳錢都可以!
+
+---
+new
+註冊不用錢了，上傳後就會顯示該繳總金額，
+
+
+
+(paper 中的所有的作者 也要以上資訊)
+
+### 上船區
+
+關鍵字限制5個，也是給框框給他填~ (至少填一個)
+
+除了上傳 word
+也讓它 (字數不限制 (如果超過2000字，再跳警告禁制它))
+
 
 ## formidable
 https://medium.com/@martin87713/node-js-formidable-%E6%AA%94%E6%A1%88%E8%99%95%E7%90%86%E5%B0%88%E5%AE%B6-4e1c3e3ef306
-
-目前遇到問題
-unhandledRejection: TypeError [ERR_INVALID_ARG_TYPE]: The "oldPath" argument must be of type string or an instance of Buffer or URL. Received undefined at Object.rename (node:fs:1019:13) at eval (webpack-internal:///(api)/./src/pages/api/uploadSummary.js:63:51) at zalgoSafe (C:\master\coding\OR-conference-website\node_modules\dezalgo\dezalgo.js:20:10) at f (C:\master\coding\OR-conference-website\node_modules\once\once.js:25:25) at IncomingForm.<anonymous> (C:\master\coding\OR-conference-website\node_modules\formidable\dist\index.cjs:1210:7) at IncomingForm.emit (node:events:514:28) at IncomingForm._maybeEnd (C:\master\coding\OR-conference-website\node_modules\formidable\dist\index.cjs:1661:10) at C:\master\coding\OR-conference-website\node_modules\formidable\dist\index.cjs:1420:14 at Array.<anonymous> (C:\master\coding\OR-conference-website\node_modules\formidable\dist\index.cjs:88:7) at finish (node:internal/streams/writable:745:25) at finishMaybe (node:internal/streams/writable:733:9) at afterWrite (node:internal/streams/writable:507:3) at onwrite (node:internal/streams/writable:480:7) at node:internal/fs/streams:410:5 at FSReqCallback.wrapper [as oncomplete] (node:fs:829:5) { code: 'ERR_INVALID_ARG_TYPE' }
 
 
 ## 結構:
@@ -79,6 +138,9 @@ _app.tsx 是 Next.js 應用程序的入口點。它用於初始化頁面，並�
 
 
 ## auth
+- [ ] google 認證
+- [ ] middleware 弄失敗 -> 改直接用 session 偵測。 
+
 NextAuth Configuration:
 
 - providers: This is where you define how users can log in. In this case, you're using the CredentialsProvider, which allows users to log in with an email and password.

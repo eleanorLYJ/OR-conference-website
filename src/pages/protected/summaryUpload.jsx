@@ -1,23 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Header } from '@/components/Header';    
 import { PageBackground } from '@/components/PageBackground';
 import { GeistSans } from 'geist/font/sans';
 import AuthorInput from '@/components/AuthorInput';
+import { Footer } from '@/components/Footer'
 
 export default function SummaryUpload() {
-  const [authors, setAuthors] = useState([{ name: '', username: '', email: '', jobTitle: '', unit: '', country: '' }]);
+  const [authors, setAuthors] = useState([{ ChineseName: '', EnglishName: '', email: '', jobTitle: '', unit: '', country: '' }]);
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
   const [title, setTitle] = useState('');
   const router = useRouter();
   const [selectedFile, setSelectedFile] = useState(null);
+  const [summary, setSummary] = useState('');
+  const [wordCount, setWordCount] = useState(0);
+  const [showWarning, setShowWarning] = useState(false);
+
 
   const handleAuthorChange = (index, value) => {
     const newAuthors = [...authors];
     newAuthors[index] = value;
     setAuthors(newAuthors);
   };
+
+  useEffect(() => {
+    const words = summary.trim().split(/\s+/).length;
+    setWordCount(words);
+    setShowWarning(words > 5000);
+  }, [summary]);
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
@@ -26,7 +37,7 @@ export default function SummaryUpload() {
 
   // Handle adding new author input
   const addAuthorInput = () => {
-    setAuthors([...authors, { name: '', username: '', email: '', jobTitle: '', unit: '', country: '' }]);
+    setAuthors([...authors, { ChineseName: '', EnlishName: '', email: '', jobTitle: '', unit: '', country: '' }]);
   };
 
   // Handle removing an author input
@@ -43,56 +54,59 @@ export default function SummaryUpload() {
       setError('Please select a Word file');
       return;
     }
-
-    const authorIds = [];
-    for (const author of authors) {
-      if (author.name) {
-        try {
-          const response = await fetch('/api/author', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(author),
-          });
-          
-          if (response.ok) {
-            const { authorId } = await response.json();
-            authorIds.push(authorId);
-          } else {
-            throw new Error('Failed to create/update author');
+    if (wordCount > 5000) {
+      setError('Summary exceeds 5000 words. Please shorten it.');
+      return;
+    }
+    try {
+      const authorIds = [];
+      for (const author of authors) {
+        if (author.ChineseName && author.EnglishName && author.email) {
+          try {
+            // Check if user exists and create if not
+            const response = await fetch('/api/checkOrCreateUser', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(author),
+            });
+            if (response.ok) {
+              const data = await response.json();
+              authorIds.push(data.userId);
+            } else {
+              const errorData = await response.json();
+              throw new Error(`Failed to process author: ${errorData.message}`);
+            }
+          } catch (error) {
+            console.error('Error processing author:', error);
+            setError('Failed to process authors');
+            return;
           }
-        } catch (error) {
-          console.error('Error processing author:', error);
-          setError('Failed to process authors');
-          return;
         }
       }
-    }
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('authors', JSON.stringify(authorIds));
-    formData.append('title', title);
-    console.log("formData", formData);
-
-    try {
-      const response = await fetch('/api/uploadSummary', {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('authors', JSON.stringify(authorIds));
+      formData.append('title', title);
+      formData.append('summary', summary);
+  
+      const uploadResponse = await fetch('/api/uploadSummary', {
         method: 'POST',
         body: formData,
       });
-
-      if (response.ok) {
+  
+      if (uploadResponse.ok) {
         console.log('Upload successful');
         router.push('/');
       } else {
-        const errorData = await response.json();
+        const errorData = await uploadResponse.json();
         setError(errorData.message || 'Upload failed');
       }
     } catch (error) {
-      console.error('Error uploading summary:', error);
-      setError('Upload failed');
+      console.error('Error during submission:', error);
+      setError('Submission failed');
     }
   };
-
   return (
     <>
       <Header />
@@ -105,6 +119,7 @@ export default function SummaryUpload() {
             <input
               key={0}
               type="text"
+              name="title"
               placeholder="Title *"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -136,6 +151,23 @@ export default function SummaryUpload() {
               </div>
             ))}
 
+            {/* Summary input */}
+            <div className="mb-4">
+              <textarea
+                name="summary"
+                placeholder="Summary *"
+                value={summary}
+                onChange={(e) => setSummary(e.target.value)}
+                className="p-2 border rounded w-full h-40"
+                required
+              />
+              {showWarning && (
+                <p className="text-red-500 text-sm">
+                  Warning: Summary exceeds 5000 words. Consider shortening it.
+                </p>
+              )}
+            </div>
+
             <button
               type="button"
               onClick={addAuthorInput}
@@ -147,6 +179,7 @@ export default function SummaryUpload() {
             {/* File input */}
             <input
               type="file"
+              name="file"
               accept=".doc,.docx"
               onChange={handleFileChange}
               className="mb-4 p-2 border rounded w-full"
@@ -163,6 +196,8 @@ export default function SummaryUpload() {
           </form>
         </main>
       </PageBackground>
+  	  <Footer />
     </>
   );
 }
+

@@ -50,7 +50,7 @@ export const TicketHome = ({ ticketNumber, username, initialFlavor }) => {
 						onClick={handleUpload}
 						className='px-6 py-5 text-lg font-bold md:text-3xl rounded-xl'>
 						<TicketIcon className='mr-3' />
-						Submit (due: 2024/09/30)
+						Submit (due: 2024/09/28 (23:59))
 					</Button>
 				</div>
 			</div>

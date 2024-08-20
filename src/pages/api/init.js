@@ -45,11 +45,16 @@ export default async function handler(req, res) {
     // `
     // console.log(await pool.query(showUsers))
 
-    const showDocuments = `
-    SELECT * FROM documents;
-    `
-    console.log(await pool.query(showDocuments))
+    // const showDocuments = `
+    // SELECT * FROM documents;
+    // `
+    // console.log(await pool.query(showDocuments))
 
+
+    const test = `SELECT id, title, authors
+                FROM documents
+                WHERE id = $1; -- Assuming you want to fetch a specific document by ID`
+    console.log(await pool.query(test))
 
     // console.log(await pool.query("UPDATE users SET role = 'admin' WHERE username = 'admim'"))
     // console.log(await pool.query('select * from users'))

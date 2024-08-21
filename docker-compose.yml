@@ -1,0 +1,65 @@
+version: '3'
+services:
+  nextjs:
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - uploads_data:/app/uploads
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - .env.local
+    networks:
+      - app-network
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - nextjs
+    networks:
+      - app-network
+  db:
+    image: postgres:13
+    env_file:
+      - .env.local
+    environment:
+      POSTGRES_DB: ${PG_DATABASE}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    ports:
+      - "${PG_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    env_file:
+      - .env.local  # Add this line
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-your_email@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-your_pgadmin_password}
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+  uploads_data:
+
+networks:
+  app-network:
+    driver: bridge

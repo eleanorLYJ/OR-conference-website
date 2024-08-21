@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Header } from '@/components/Header';    
+import { Header } from '@/components/Header';
 import { PageBackground } from '@/components/PageBackground';
 import { GeistSans } from 'geist/font/sans';
 import AuthorInput from '@/components/AuthorInput';
 import { Footer } from '@/components/Footer'
 
 export default function SummaryUpload() {
-  const [authors, setAuthors] = useState([{ firstName: '', lastName:'', email: '', jobTitle: '', unit: '', country: '', isCorresponding: false}]);
+  const [authors, setAuthors] = useState([{ firstName: '', lastName: '', email: '', jobTitle: '', unit: '', country: '', isCorresponding: false }]);
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
   const [title, setTitle] = useState('');
@@ -16,11 +16,11 @@ export default function SummaryUpload() {
   const [summary, setSummary] = useState('');
   const [wordCount, setWordCount] = useState(0);
   const [showWarning, setShowWarning] = useState(false);
-  const [correspondingAuthorIndex, setCorrespondingAuthorId] = useState(null);
+  const [correspondingAuthorId, setCorrespondingAuthorId] = useState(null);
   const [correspondingAuthorError, setCorrespondingAuthorError] = useState('');
 
   const handleAuthorChange = (index, updatedAuthor) => {
-    setAuthors(authors.map((author, i) => 
+    setAuthors(authors.map((author, i) =>
       i === index ? updatedAuthor : author
     ));
   };
@@ -38,13 +38,16 @@ export default function SummaryUpload() {
 
   // Handle adding new author input
   const addAuthorInput = () => {
-    setAuthors([...authors, { username: '', email: '', jobTitle: '', unit: '', country: '', isCorresponding: false, phoneNumber: '', identityNumber:''}]);
+    setAuthors([...authors, { username: '', email: '', jobTitle: '', unit: '', country: '', isCorresponding: false, phoneNumber: '', identityNumber: '' }]);
   };
 
   // Handle removing an author input
   const removeAuthorInput = (index) => {
     const newAuthors = authors.filter((_, i) => i !== index);
     setAuthors(newAuthors);
+    if (correspondingAuthorId === index) {
+      setCorrespondingAuthorId(null);
+    }
   };
 
   const handleCorrespondingChange = (index, isCorresponding) => {
@@ -54,12 +57,12 @@ export default function SummaryUpload() {
     }));
 
     setAuthors(updatedAuthors);
-
-    // Find the corresponding author's ID
-    const correspondingAuthor = updatedAuthors.find(author => author.isCorresponding);
-    setCorrespondingAuthorId(correspondingAuthor ? correspondingAuthor.id : null);
-    console.log("check handleCorrespondingChange:", correspondingAuthorIndex)
+    setCorrespondingAuthorId(isCorresponding ? index : null);
   };
+
+  useEffect(() => {
+    console.log("correspondingAuthorId updated:", correspondingAuthorId);
+  }, [correspondingAuthorId]);
 
   useEffect(() => {
     const correspondingAuthorsCount = authors.filter(author => author.isCorresponding).length;
@@ -76,7 +79,6 @@ export default function SummaryUpload() {
     e.preventDefault();
 
     if (correspondingAuthorError) {
-      // Display error message to user
       alert(correspondingAuthorError);
       return;
     }
@@ -91,47 +93,51 @@ export default function SummaryUpload() {
       setError('Summary exceeds 5000 words. Please shorten it.');
       return;
     }
+
     try {
       const authorIds = [];
-      for (const author of authors) {
+      let correspondingAuthorUserId = null;
+
+      for (const [index, author] of authors.entries()) {
         if (author.firstName && author.lastName && author.email) {
           const fullName = `${author.firstName} ${author.lastName}`;
           try {
-            // Check if user exists and create if not
             const response = await fetch('/api/checkOrCreateUser', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({...author, username: fullName}),
+              body: JSON.stringify({ ...author, username: fullName }),
             });
+
             if (response.ok) {
               const data = await response.json();
               authorIds.push(data.userId);
+
+              // 如果該作者為通訊作者，設置 correspondingAuthorUserId 為該作者的索引
+              if (author.isCorresponding) {
+                correspondingAuthorUserId = data.userId;
+              }
             } else {
               const errorData = await response.json();
               throw new Error(`Failed to process author: ${errorData.message}`);
             }
           } catch (error) {
-            console.error('Error processing author:', error);
             setError('Failed to process authors');
             return;
           }
         }
       }
-
       const formData = new FormData();
-
-      console.log('correspondingAuthorIndex', correspondingAuthorIndex)
       formData.append('file', file);
       formData.append('authors', JSON.stringify(authorIds));
       formData.append('title', title);
-      formData.append('correspondingAuthorIndex', correspondingAuthorIndex);
+      formData.append('correspondingAuthorId', correspondingAuthorUserId || '');
       formData.append('summary', summary);
-  
+
       const uploadResponse = await fetch('/api/uploadSummary', {
         method: 'POST',
         body: formData,
       });
-  
+
       if (uploadResponse.ok) {
         console.log('Upload successful');
         router.push('/');
@@ -214,13 +220,13 @@ export default function SummaryUpload() {
                 </p>
               )}
             </div>
-            <p>檔案只接受 .doc, .docx, .pdf</p>
+            <p>檔案只接受 .doc, .docx</p>
 
             {/* File input */}
             <input
               type="file"
               name="file"
-              accept=".doc,.docx, .pdf"
+              accept=".doc,.docx"
               onChange={handleFileChange}
               className="mb-4 p-2 border rounded w-full"
               required
@@ -236,7 +242,7 @@ export default function SummaryUpload() {
           </form>
         </main>
       </PageBackground>
-  	  <Footer />
+      <Footer />
     </>
   );
 }

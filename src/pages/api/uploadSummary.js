@@ -40,10 +40,18 @@ export default async (req, res) => {
     }
 
   try {
-    const { authors, title, summary, correspondingAuthorIndex } = fields;
-    const parsedCorrespondingAuthorId = parseInt(correspondingAuthorIndex[0], 10);
+    const { authors, title, summary, correspondingAuthorId } = fields;
+    // Validate that a corresponding author ID is set
+    if (!correspondingAuthorId || 
+      correspondingAuthorId[0] === 'undefined' || 
+      correspondingAuthorId[0] === 'null' ||
+      correspondingAuthorId[0] === '') {
+      console.log("Id is undefined")
+      return res.status(400).json({ message: 'No corresponding author selected.' });
+    }  
+    const parsedCorrespondingAuthorId = parseInt(correspondingAuthorId[0], 10);
     const file = files.file;
-    console.log("extract title: ", title, "correspondingAuthorIndex", correspondingAuthorIndex)
+    console.log("extract title: ", title, "correspondingAuthorId", correspondingAuthorId)
     
     if (isNaN(parsedCorrespondingAuthorId)) {
       return res.status(400).json({ message: 'Invalid corresponding author ID' });

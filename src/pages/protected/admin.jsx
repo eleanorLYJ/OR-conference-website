@@ -5,6 +5,15 @@ import { PageBackground } from '@/components/PageBackground';
 import Link from 'next/link';
 import { GeistSans } from 'geist/font/sans';
 
+const formatTitle = (title) => {
+  if (typeof title === 'string') {
+    // Remove surrounding curly braces and quotes
+    return title.replace(/^{["'](.*)["']}$/, '$1');
+  }
+  return title;
+};
+
+
 export default function AdminPage() {
   const [documents, setDocuments] = useState([]);
   const { data: session, status } = useSession();
@@ -63,11 +72,11 @@ export default function AdminPage() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {documents.map((doc) => (
                   <tr key={doc.id}>
-                    <td className="w-3/5 px-6 py-4 whitespace-nowrap overflow-hidden overflow-ellipsis">{doc.title}</td>
+                    <td className="w-3/5 px-6 py-4 whitespace-nowrap overflow-hidden overflow-ellipsis">{formatTitle(doc.title)}</td>
                     <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                      <Link href={`/api/download/${doc.id}`}>
+                      {/* <Link href={`/api/download/${doc.id}`}>
                         <a className="text-blue-600 hover:text-blue-900">Download</a>
-                      </Link>
+                      </Link> */}
                     </td>
                     <td className="w-1/10 px-6 py-4 whitespace-nowrap">{doc.isPay ? 'Paid' : 'Not Paid'}</td>
                     <td className="w-1/10 px-6 py-4 whitespace-nowrap">{doc.isAccepted ? 'Approved' : 'Pending'}</td>

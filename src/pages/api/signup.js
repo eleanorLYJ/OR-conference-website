@@ -14,7 +14,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const User = await pool.query('SELECT * FROM users WHERE email = $1 AND password_hash IS NULL', [email]);
+    const User = await pool.query('SELECT * FROM users WHERE username = $1 AND email = $2 AND password_hash IS NULL', [username, email]);
     if (User.rows.length > 0) {
       await pool.query(
         'UPDATE users SET password_hash = $1 WHERE id = $2',
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
           hashedPassword = await bcrypt.hash(password, 10);
         }
         const result = await pool.query(
-          'INSERT INTO users (username, email, password_hash, job_title, unit, country, role, phone_number, identity_number) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
+          'INSERT INTO users (username, email, password_hash, job_title, unit, country, role, phone_number, identityNumber) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
           [username, email, hashedPassword, jobTitle, unit, country, 'user', phoneNumber, identityNumber]
         );
     

@@ -214,14 +214,13 @@ export default function SummaryUpload() {
                 </p>
               )}
             </div>
-
-
+            <p>檔案只接受 .doc, .docx, .pdf</p>
 
             {/* File input */}
             <input
               type="file"
               name="file"
-              accept=".doc,.docx"
+              accept=".doc,.docx, .pdf"
               onChange={handleFileChange}
               className="mb-4 p-2 border rounded w-full"
               required

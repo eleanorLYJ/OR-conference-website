@@ -42,12 +42,11 @@ export default function Home({ username, flavor, ticketNumber, burst }) {
     	    <PageBackground>
 				<div className='max-w-5xl mx-auto'>
 					<h2 className='animate-fade-in-up text-6xl md:text-[80px] mx-auto text-center max-w-[20ch] text-white font-bold pt-40'>
-					第 20 屆台灣作業研究學會年會暨學術研討會 
+						第 20 屆台灣作業研究學會年會暨學術研討會 
 					</h2>
-					<p className='text-2xl mt-2 mb-6 text-center text-white '>
-					The 20th Annual Meeting of the Operations Research Society of Taiwan (ORSTW 2024) </p>
+						The 20th Annual Meeting of the Operations Research Society of Taiwan (ORSTW 2024)
 					<h3 className='text-2xl mb-6 text-center text-white text-bold'>
-					2024年11月23-24日 <br/> 國立成功大學 
+						2024年11月23-24日 <br/> 國立成功大學 
 					</h3>
 				</div>
 			</PageBackground>
@@ -134,8 +133,7 @@ export default function Home({ username, flavor, ticketNumber, burst }) {
 			<div className='flex flex-col items-center justify-center p-10 md:px-0 md:w-3/5 md:mx-auto'>
 			<h1 className='text-3xl font-bold mb-6 text-white'>投稿</h1>
 			<p className='text-xl font-bold mb-6 text-gray-200'>
-				Extended abstract format only.
-				Visit http://orstw2024.iim.ncku.edu.tw/ for details.
+				<a href="https://www.dropbox.com/scl/fi/t6nzmyj8nek1bcgtl39zi/ORSTW2020_abstract_format.doc?rlkey=q27bj7bylg5cr5g0cv8y2ydg2&e=1&dl=0"> 摘要格式 </a>
 			</p>
 			</div>
 			<TicketHome ticketNumber={ticketNumber} initialFlavor={flavor} username={username} />

@@ -40,9 +40,15 @@ export default async (req, res) => {
     }
 
   try {
-    const { authors, title, summary } = fields;
+    const { authors, title, summary, correspondingAuthorIndex } = fields;
+    const parsedCorrespondingAuthorId = parseInt(correspondingAuthorIndex[0], 10);
     const file = files.file;
-    console.log("extract title: ", title)
+    console.log("extract title: ", title, "correspondingAuthorIndex", correspondingAuthorIndex)
+    
+    if (isNaN(parsedCorrespondingAuthorId)) {
+      return res.status(400).json({ message: 'Invalid corresponding author ID' });
+    }
+
     if (!file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
@@ -53,35 +59,35 @@ export default async (req, res) => {
 
     const newPath = path.join(form.uploadDir, uniqueFilename);
 
-      await fs.rename(oldPath, newPath);
+    await fs.rename(oldPath, newPath);
 
-      const client = await pool.connect();
-      try {
-        await client.query('BEGIN'); // Start a transaction
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN'); // Start a transaction
 
-        console.log('Parsed user ID:', session.user.id);
-        if (isNaN(session.user.id)) {
-          throw new Error('Invalid user ID');
-        }
-        const result = await client.query(
-          'INSERT INTO documents (file_name, file_path, user_id, authors, title, summary) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-          [uniqueFilename, newPath, session.user.id, authors, title, summary]
-        );
-        console.log("result", result)
-        await client.query('COMMIT'); // Commit the transaction
-        console.log("successfully uploaded: fileId", result.rows[0].id, "file_name", uniqueFilename, "file_path", newPath, "user_id", session.user.id, "authors", authors, "title", title)
-        return res.status(200).json({ message: 'File uploaded successfully', fileId: result.rows[0].id });
-      } catch (dbError) {
-        await client.query('ROLLBACK'); // Rollback on error
-        console.error('Database error:', dbError);
-        return res.status(500).json({ message: 'Database error' });
+      console.log('Parsed user ID:', session.user.id);
+      if (isNaN(session.user.id)) {
+        throw new Error('Invalid user ID');
       }
-      finally {
-        client.release();
-      } 
-    }catch (err) {
-      console.error('Error saving file:', err);
-      return res.status(500).json({ message: 'File save error' });
+      const result = await client.query(
+        'INSERT INTO documents (file_name, file_path, user_id, authors, title, summary, corresponding_author_index) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+        [uniqueFilename, newPath, session.user.id, authors, title, summary, parsedCorrespondingAuthorId]
+      );
+      console.log("result", result)
+      await client.query('COMMIT'); // Commit the transaction
+      console.log("successfully uploaded: fileId", result.rows[0].id, "file_name", uniqueFilename, "file_path", newPath, "user_id", session.user.id, "authors", authors, "title", title)
+      return res.status(200).json({ message: 'File uploaded successfully', fileId: result.rows[0].id });
+    } catch (dbError) {
+      await client.query('ROLLBACK'); // Rollback on error
+      console.error('Database error:', dbError);
+      return res.status(500).json({ message: 'Database error' });
     }
+    finally {
+      client.release();
+    } 
+  } catch (err) {
+    console.error('Error saving file:', err);
+    return res.status(500).json({ message: 'File save error' });
+  }
   });
 };

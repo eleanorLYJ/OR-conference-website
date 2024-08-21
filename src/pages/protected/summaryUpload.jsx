@@ -7,7 +7,7 @@ import AuthorInput from '@/components/AuthorInput';
 import { Footer } from '@/components/Footer'
 
 export default function SummaryUpload() {
-  const [authors, setAuthors] = useState([{ ChineseName: '', EnglishName: '', email: '', jobTitle: '', unit: '', country: '' }]);
+  const [authors, setAuthors] = useState([{ firstName: '', lastName:'', email: '', jobTitle: '', unit: '', country: '', isCorresponding: false}]);
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
   const [title, setTitle] = useState('');
@@ -16,12 +16,13 @@ export default function SummaryUpload() {
   const [summary, setSummary] = useState('');
   const [wordCount, setWordCount] = useState(0);
   const [showWarning, setShowWarning] = useState(false);
+  const [correspondingAuthorIndex, setCorrespondingAuthorId] = useState(null);
+  const [correspondingAuthorError, setCorrespondingAuthorError] = useState('');
 
-
-  const handleAuthorChange = (index, value) => {
-    const newAuthors = [...authors];
-    newAuthors[index] = value;
-    setAuthors(newAuthors);
+  const handleAuthorChange = (index, updatedAuthor) => {
+    setAuthors(authors.map((author, i) => 
+      i === index ? updatedAuthor : author
+    ));
   };
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export default function SummaryUpload() {
 
   // Handle adding new author input
   const addAuthorInput = () => {
-    setAuthors([...authors, { ChineseName: '', EnlishName: '', email: '', jobTitle: '', unit: '', country: '' }]);
+    setAuthors([...authors, { username: '', email: '', jobTitle: '', unit: '', country: '', isCorresponding: false, phoneNumber: '', identityNumber:''}]);
   };
 
   // Handle removing an author input
@@ -46,8 +47,40 @@ export default function SummaryUpload() {
     setAuthors(newAuthors);
   };
 
+  const handleCorrespondingChange = (index, isCorresponding) => {
+    const updatedAuthors = authors.map((author, i) => ({
+      ...author,
+      isCorresponding: i === index ? isCorresponding : false
+    }));
+
+    setAuthors(updatedAuthors);
+
+    // Find the corresponding author's ID
+    const correspondingAuthor = updatedAuthors.find(author => author.isCorresponding);
+    setCorrespondingAuthorId(correspondingAuthor ? correspondingAuthor.id : null);
+    console.log("check handleCorrespondingChange:", correspondingAuthorIndex)
+  };
+
+  useEffect(() => {
+    const correspondingAuthorsCount = authors.filter(author => author.isCorresponding).length;
+    if (correspondingAuthorsCount === 0) {
+      setCorrespondingAuthorError('Please select a corresponding author.');
+    } else if (correspondingAuthorsCount > 1) {
+      setCorrespondingAuthorError('Only one corresponding author can be selected.');
+    } else {
+      setCorrespondingAuthorError('');
+    }
+  }, [authors]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (correspondingAuthorError) {
+      // Display error message to user
+      alert(correspondingAuthorError);
+      return;
+    }
+
     setError('');
 
     if (!file) {
@@ -61,13 +94,14 @@ export default function SummaryUpload() {
     try {
       const authorIds = [];
       for (const author of authors) {
-        if (author.ChineseName && author.EnglishName && author.email) {
+        if (author.firstName && author.lastName && author.email) {
+          const fullName = `${author.firstName} ${author.lastName}`;
           try {
             // Check if user exists and create if not
             const response = await fetch('/api/checkOrCreateUser', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(author),
+              body: JSON.stringify({...author, username: fullName}),
             });
             if (response.ok) {
               const data = await response.json();
@@ -85,9 +119,12 @@ export default function SummaryUpload() {
       }
 
       const formData = new FormData();
+
+      console.log('correspondingAuthorIndex', correspondingAuthorIndex)
       formData.append('file', file);
       formData.append('authors', JSON.stringify(authorIds));
       formData.append('title', title);
+      formData.append('correspondingAuthorIndex', correspondingAuthorIndex);
       formData.append('summary', summary);
   
       const uploadResponse = await fetch('/api/uploadSummary', {
@@ -126,7 +163,9 @@ export default function SummaryUpload() {
               className="mb-4 p-2 border rounded w-full"
               required
             />
-
+            {correspondingAuthorError && (
+              <div className="text-red-500 mb-4">{correspondingAuthorError}</div>
+            )}
             {/* Dynamic Author inputs */}
             {authors.map((author, index) => (
               <div key={index} className="flex items-center mb-4">
@@ -136,6 +175,7 @@ export default function SummaryUpload() {
                     author={author}
                     onChange={handleAuthorChange}
                     required={index === 0} // Only the first author is required
+                    onCorrespondingChange={handleCorrespondingChange}
                   />
                 </div>
                 {/* Remove Button */}
@@ -150,6 +190,13 @@ export default function SummaryUpload() {
                 )}
               </div>
             ))}
+            <button
+              type="button"
+              onClick={addAuthorInput}
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4"
+            >
+              Add Another Author
+            </button>
 
             {/* Summary input */}
             <div className="mb-4">
@@ -168,13 +215,7 @@ export default function SummaryUpload() {
               )}
             </div>
 
-            <button
-              type="button"
-              onClick={addAuthorInput}
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4"
-            >
-              Add Another Author
-            </button>
+
 
             {/* File input */}
             <input

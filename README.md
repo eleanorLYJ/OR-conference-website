@@ -104,7 +104,6 @@ document 有 user (fk)嗎
 conference
 一篇paper 一定要有一人交錢 (他有名牌) -> 管理部分也要
 一篇可能被兩人繳錢? when 
-
 不繳交摘要的人，也可以交錢
 
 ### 繳錢方式
@@ -113,17 +112,16 @@ conference
 
 給他們 document id ，不論 通訊作者或斜作者繳錢都可以!
 
+有一个 /api/getUser/:id 端点来获取单个用户的信息。如果您的 API 结构不同，您可能需要调整相应的 fetch 调用。-> 请注意这种方法可能会导致大量的 API 调用，特别是当有很多文档和作者时。如果性能成为问题，您可能需要考虑在后端实现一个批量获取用户信息的 API，或者使用其他优化策略。
+
 ---
 new
 註冊不用錢了，上傳後就會顯示該繳總金額，
-
-
-
 (paper 中的所有的作者 也要以上資訊)
 
-### 上船區
+### 上傳區
 
-關鍵字限制5個，也是給框框給他填~ (至少填一個)
+- [ ] 關鍵字限制5個，也是給框框給他填~ (至少填一個)
 
 除了上傳 word
 也讓它 (字數不限制 (如果超過2000字，再跳警告禁制它))
@@ -153,3 +151,6 @@ NextAuth Configuration:
 
 - Callbacks: (Commented Out)
 jwt: This callback is used to manage the JWT token. When a user logs in, you can attach custom properties (like id and role) to the token. This information will then be available in the session.
+
+
+目前卡在 我希望

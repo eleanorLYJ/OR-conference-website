@@ -6,15 +6,15 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
-    const { chineseName, englishName, email, password, jobTitle, unit, country } = req.body;
-    console.log("Received user data:", chineseName, englishName, email, jobTitle, unit, country)
+    const { username, email, password, jobTitle, unit, country, phoneNumber, identityNumber} = req.body;
+    console.log("Received user data:", username, email, jobTitle, unit, country, phoneNumber, identityNumber)
     
     
-    if (!chineseName || !englishName || !email || !jobTitle || !unit || !country) {
+    if (!username || !email || !jobTitle || !unit || !country) {
         return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const User = await pool.query('SELECT * FROM users WHERE chinese_name = $1 AND english_name = $2 AND email = $3 AND password_hash IS NULL', [chineseName, englishName, email]);
+    const User = await pool.query('SELECT * FROM users WHERE email = $1 AND password_hash IS NULL', [email]);
     if (User.rows.length > 0) {
       await pool.query(
         'UPDATE users SET password_hash = $1 WHERE id = $2',
@@ -32,8 +32,8 @@ export default async function handler(req, res) {
           hashedPassword = await bcrypt.hash(password, 10);
         }
         const result = await pool.query(
-          'INSERT INTO users (chinese_name, english_name, email, password_hash, job_title, unit, country, role) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id',
-          [chineseName, englishName, email, hashedPassword, jobTitle, unit, country, 'user']
+          'INSERT INTO users (username, email, password_hash, job_title, unit, country, role, phone_number, identity_number) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
+          [username, email, hashedPassword, jobTitle, unit, country, 'user', phoneNumber, identityNumber]
         );
     
         console.log('User inserted successfully', result);

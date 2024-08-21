@@ -1,13 +1,13 @@
 import React from 'react';
-import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Box from '@mui/material/Box';
 
 //  author = {} ，This should prevent the "Cannot read properties of undefined" error.
-const AuthorInput = ({ index, author = {}, onChange, required }) => {
-    const handleChange = (field, value) => {
-        onChange(index, { ...author, [field]: value });
-      };
+const AuthorInput = ({ index, author, onChange, required, onCorrespondingChange }) => {
+  const handleChange = (field, value) => {
+    onChange(index, { ...author, [field]: value });
+    };
 
       return (
         <Box sx={{ display: 'flex', flexDirection: 'column', mb: 2 }}>
@@ -28,17 +28,17 @@ const AuthorInput = ({ index, author = {}, onChange, required }) => {
           }}>
           <input
             type="text"
-            placeholder="Chinese Name"
-            value={author.ChineseName || ''}
-            onChange={(e) => handleChange('ChineseName', e.target.value)}
+            placeholder="First Name *"
+            value={author.firstName || ''}
+            onChange={(e) => handleChange('firstName', e.target.value)}
             className="mb-4 p-2 border rounded w-full"
             required={required}
           />
           <input
               type="text"
-              placeholder="English Name,"
-              value={author.EnglishName || ''}
-              onChange={(e) => handleChange('EnglishName', e.target.value)}
+              placeholder="Last Name *"
+              value={author.lastName || ''}
+              onChange={(e) => handleChange('lastName', e.target.value)}
               className="mb-4 p-2 border rounded w-full"
               required={required}
           />
@@ -52,17 +52,17 @@ const AuthorInput = ({ index, author = {}, onChange, required }) => {
           />
           <input
             type="text"
-            placeholder="Job Title"
-            value={author.jobTitle || ''}
-            onChange={(e) => handleChange('jobTitle', e.target.value)}
+            placeholder="Affiliation"
+            value={author.unit || ''}
+            onChange={(e) => handleChange('unit', e.target.value)}
             className="mb-4 p-2 border rounded w-full"
             required={required}
           />
           <input
             type="text"
-            placeholder="Unit"
-            value={author.unit || ''}
-            onChange={(e) => handleChange('unit', e.target.value)}
+            placeholder="Job Title"
+            value={author.jobTitle || ''}
+            onChange={(e) => handleChange('jobTitle', e.target.value)}
             className="mb-4 p-2 border rounded w-full"
             required={required}
           />
@@ -318,6 +318,36 @@ const AuthorInput = ({ index, author = {}, onChange, required }) => {
               <option value="Zambia">Zambia</option>
               <option value="Zimbabwe">Zimbabwe</option>
             </select>
+            <FormControlLabel
+            control={
+              <Checkbox
+                checked={author.isCorresponding || false}
+                onChange={(e) => {
+                  handleChange('isCorresponding', e.target.checked);
+                  onCorrespondingChange(index, e.target.checked);
+                }}
+              />
+            }
+            label="Corresponding Author"
+          />
+          {author.isCorresponding && (
+            <>
+              <input
+                type="tel"
+                placeholder="Phone Number *"
+                value={author.phoneNumber || ''}
+                onChange={(e) => handleChange('phoneNumber', e.target.value)}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Identity or Passport Number *"
+                value={author.identityNumber || ''}
+                onChange={(e) => handleChange('identityNumber', e.target.value)}
+                required
+              />
+            </>
+          )}
           </Box>
         </AccordionDetails>
       </Accordion>

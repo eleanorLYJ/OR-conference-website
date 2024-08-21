@@ -9,23 +9,24 @@ import { MiduLogo } from '@/components/logos/midudev'
 // email* [V]
 // password* [V]
 // password* (double check) [V]
-// 聯絡手機 (台灣電話*、國際電話)
+// 聯絡手機 (台灣電話*、國際電話) [V]
 // 地址 *
 export default function Signup() {
   console.log('Enter Signup');
-  const [chineseName, setChineseName] = useState('');
-  const [englishName, setEnglishName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [unit, setUnit] = useState(''); // input
-  const [jobTitle, setJobTitle] = useState(''); // input
+  const [unit, setUnit] = useState('');
+  const [jobTitle, setJobTitle] = useState(''); 
   const [confirmPassword, setConfirmPassword] = useState('');
   const [country, setCountry] = useState('');
-
+  const [phoneNumber, setPhoneNumber] = useState('');
   const router = useRouter();
   const [error, setError] = useState('');
 
   const handleSignup = async (e) => {
+    console.log('handleSignup function called');
     e.preventDefault();
     setError('');
     if (password !== confirmPassword) {
@@ -33,12 +34,17 @@ export default function Signup() {
       return;
     }
     try {
+      const username = `${firstName.trim()} ${lastName.trim()}`.trim();
+      if (!username) {
+        setError('First name and last name are required');
+        return;
+      }
       const response = await fetch('/api/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ chineseName, englishName, email, password, jobTitle, unit, country }),
+        body: JSON.stringify({ username , email, password, jobTitle, unit, country, phoneNumber}),
       });
 
       const data = await response.json();
@@ -76,33 +82,65 @@ export default function Signup() {
               <form onSubmit={handleSignup} className="space-y-4 m-10">
             <input
               type="text"
-              placeholder="Chinese Name *"
-              value={chineseName}
-              onChange={(e) => setChineseName(e.target.value)}
+              placeholder="First Name *"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               type="text"
-              placeholder="Enlish Name *"
-              value={englishName}
-              onChange={(e) => setEnglishName(e.target.value)}
+              placeholder="Last Name *"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
-              type="unit"
-              placeholder="School/Unit *"
+              type="email"
+              placeholder="Email *"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="password"
+              placeholder="Password *"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="password"
+              placeholder="Confirm Password *"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="text"
+              placeholder="Affiliation *"
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
-              type="job "
+              type="text"
               placeholder="Job Title *"
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type=" "
+              placeholder="Phone Number e.g. 0912-345-678"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -358,30 +396,6 @@ export default function Signup() {
               <option value="Zambia">Zambia</option>
               <option value="Zimbabwe">Zimbabwe</option>
             </select>
-            <input
-              type="email"
-              placeholder="Email *"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="password"
-              placeholder="Password *"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="password"
-              placeholder="Confirm Password *"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
               <button class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">Submit</button>
           </form>
           </div>

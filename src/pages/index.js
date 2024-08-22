@@ -2,8 +2,7 @@ import Head from 'next/head'
 import { GeistSans } from 'geist/font/sans'
 import { Countdown } from '@/components/Countdown'
 import { Header } from '@/components/Header'
-import { TicketHome } from '@/sections/ticket-home'
-import { query } from '@/lib/pg'
+import { TicketHome } from '@/components/ticket-home'
 import { PageBackground } from '@/components/PageBackground'
 import { Footer } from '@/components/Footer'
 const PREFIX_CDN = 'https://ljizvfycxyxnupniyyxb.supabase.co/storage/v1/object/public/tickets'
@@ -160,30 +159,9 @@ export default function Home({ username, flavor, ticketNumber, burst }) {
 	)
 }
 // 
-export const getServerSideProps = async (ctx) => {
-	const { ticket } = ctx.query
-  
-	if (!ticket) {
-	  return { props: {} }
+export const getServerSideProps = async () => {
+
+	return { 
+		props: {}, 
 	}
-  
-	try {
-	  const result = await query('SELECT * FROM ticket WHERE user_name = $1', [ticket])
-  
-	  if (result.rows.length > 0) {
-		const row = result.rows[0]
-		return {
-		  props: {
-			burst: crypto.randomUUID(),
-			ticketNumber: row.ticket_number,
-			username: row.user_name,
-			flavor: row.flavour
-		  }
-		}
-	  }
-	} catch (err) {
-	  console.error('Database query error', err)
-	}
-  
-	return { props: {} }
 }

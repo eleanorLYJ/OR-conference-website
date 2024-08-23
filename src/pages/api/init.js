@@ -35,11 +35,13 @@ export default async function handler(req, res) {
         summary TEXT,
         isPay BOOLEAN DEFAULT FALSE,
         isAccepted BOOLEAN DEFAULT FALSE,
+        identitynumber TEXT,
         uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     `;
 
     // await pool.query('DROP TABLE IF EXISTS documents');
+    // console.log('Drop table')
     // await pool.query('DROP TABLE IF EXISTS users');
 
     // await pool.query(createUsersTable);
@@ -47,12 +49,10 @@ export default async function handler(req, res) {
     // await pool.query(createDocumentsTable);
     // console.log('Documents table created successfully');
 
-
-
-    const showUsers = `
-    SELECT * FROM users;
-    `
-    console.log(await pool.query(showUsers))
+    // const showUsers = `
+    // SELECT * FROM users;
+    // `
+    // console.log(await pool.query(showUsers))
 
     const showDocuments = `
     SELECT * FROM documents;

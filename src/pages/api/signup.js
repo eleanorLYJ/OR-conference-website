@@ -6,8 +6,8 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
-    const { username, email, password, jobTitle, unit, country, phoneNumber, identityNumber} = req.body;
-    console.log("Received user data:", username, email, jobTitle, unit, country, phoneNumber, identityNumber)
+    const { username, email, password, jobTitle, unit, country, phoneNumber} = req.body;
+    console.log("Received user data:", username, email, jobTitle, unit, country, phoneNumber)
     
     
     if (!username || !email || !jobTitle || !unit || !country) {
@@ -32,8 +32,8 @@ export default async function handler(req, res) {
           hashedPassword = await bcrypt.hash(password, 10);
         }
         const result = await pool.query(
-          'INSERT INTO users (username, email, password_hash, job_title, unit, country, role, phone_number, identityNumber) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
-          [username, email, hashedPassword, jobTitle, unit, country, 'user', phoneNumber, identityNumber]
+          'INSERT INTO users (username, email, password_hash, job_title, unit, country, role, phone_number) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id',
+          [username, email, hashedPassword, jobTitle, unit, country, 'user', phoneNumber]
         );
     
         console.log('User inserted successfully', result);

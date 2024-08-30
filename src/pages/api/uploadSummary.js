@@ -18,7 +18,6 @@ export default async (req, res) => {
   if (!session) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
-  // 確保上傳目錄存在
   const uploadsDir = path.join(process.cwd(), 'uploads');
   try {
     await fs.mkdir(uploadsDir, { recursive: true });
@@ -30,7 +29,7 @@ export default async (req, res) => {
   const form = new IncomingForm({
     uploadDir: './uploads',
     keepExtensions: true,
-    maxFileSize: 100 * 1024 * 1024, // 100MB
+    maxFileSize: 10 * 1024 * 1024, // 10MB
   });
 
   form.parse(req, async (err, fields, files) => {
@@ -61,13 +60,22 @@ export default async (req, res) => {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    const originalFilename = file.originalFilename;
-    const uniqueFilename = `${Date.now()}_${originalFilename}`;
-    const oldPath = file.filepath || file.path || file[0]?.filepath || file[0]?.path;
+    const uniqueFilename = `${session.user.id}_${title}`;
 
+	const fileExists = await fs.access(path.join(uploadsDir, uniqueFilename)).then(() => true).catch(() => false);
+	if (fileExists) {
+	  return res.status(400).json({ message: 'File with the same user ID and title already exists.' });
+	}
+
+    const oldPath = file.filepath || file.path || file[0]?.filepath || file[0]?.path;
     const newPath = path.join(form.uploadDir, uniqueFilename);
 
-    await fs.rename(oldPath, newPath);
+    try {
+      await fs.rename(oldPath, newPath);
+      console.log(`File moved to ${newPath}`);
+    } catch (renameError) {
+      console.error('Error moving file:', renameError);
+    }
 
     const client = await pool.connect();
     try {

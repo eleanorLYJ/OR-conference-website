@@ -64,8 +64,12 @@ export function Header() {
 					<Link href="/protected/admin" className="hidden md:block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
 						Admin
                 	</Link>
-					<button className="text-white underline" onClick={() => signOut()}>Logout</button>
-					{/* <Link href="" className="text-white underline">Logout</Link> */}
+					<button 
+					className="text-white underline" 
+					onClick={() => signOut({ callbackUrl: '/' })}
+					>
+					Logout
+					</button>
 				</>
         )}
 			</div>

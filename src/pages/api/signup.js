@@ -1,6 +1,7 @@
 // pages/api/signup.js
 import { pool } from '@/lib/pg';
 import bcrypt from 'bcrypt';
+import { sanitizeInput } from '@/utils/sanitize';
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -8,10 +9,15 @@ export default async function handler(req, res) {
     }
     const { username, email, password, jobTitle, unit, country, phoneNumber} = req.body;
     console.log("Received user data:", username, email, jobTitle, unit, country, phoneNumber)
-    
+    const sanitizedUsername = sanitizeInput(username);
+    const sanitizedEmail = sanitizeInput(email);
     
     if (!username || !email || !jobTitle || !unit || !country) {
-        return res.status(400).json({ message: 'All fields are required' });
+        return res.status(400).json({ message: 'Required fields need to be filled in' });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(sanitizedEmail)) {
+      return res.status(400).json({ message: 'Invalid email format' });
     }
 
     const User = await pool.query('SELECT * FROM users WHERE username = $1 AND email = $2 AND password_hash IS NULL', [username, email]);

@@ -44,20 +44,20 @@ export default async function handler(req, res) {
     // console.log('Drop table')
     // await pool.query('DROP TABLE IF EXISTS users');
 
-    // await pool.query(createUsersTable);
-    // console.log('Attempting to create documents table');
-    // await pool.query(createDocumentsTable);
-    // console.log('Documents table created successfully');
+    await pool.query(createUsersTable);
+    console.log('Attempting to create documents table');
+    await pool.query(createDocumentsTable);
+    console.log('Documents table created successfully');
 
     // const showUsers = `
     // SELECT * FROM users;
     // `
     // console.log(await pool.query(showUsers))
 
-    const showDocuments = `
-    SELECT * FROM documents;
-    `
-    console.log(await pool.query(showDocuments))
+    // const showDocuments = `
+    // SELECT * FROM documents;
+    // `
+    // console.log(await pool.query(showDocuments))
 
 
     // const test = `SELECT id, title, authors
@@ -70,7 +70,7 @@ export default async function handler(req, res) {
     // await pool.query(createUsersTable);
     // await pool.query(createDocumentsTable);
 
-    res.status(200).json({ message: 'successfully' });
+    res.status(200).json({ message: 'successfully created tables' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

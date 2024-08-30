@@ -1,10 +1,21 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+// next.config.js
+// next.config.js
+module.exports = {
 	reactStrictMode: true,
 	transpilePackages: ['geist'],
 	experimental: {
-	  esmExternals: false // THIS IS THE FLAG THAT MATTERS
+	  esmExternals: false,
 	},
-  }
-  
-  module.exports = nextConfig
+	rewrites: async () => {
+	  return [
+		{
+		  source: '/uploads/:path*',
+		  destination: '/uploads/:path*',
+		},
+	  ];
+	},
+	// Optional: Configure public directory for static assets
+	publicRuntimeConfig: {
+	  uploadsPath: '/uploads',
+	},
+  };

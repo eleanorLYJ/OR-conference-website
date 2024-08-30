@@ -43,7 +43,10 @@ export default function Home({ username, flavor, ticketNumber, burst }) {
 					<h2 className='animate-fade-in-up text-6xl md:text-[80px] mx-auto text-center max-w-[20ch] text-white font-bold pt-40'>
 						第 20 屆台灣作業研究學會年會暨學術研討會 
 					</h2>
+					<h3 className='animate-fade-in-up text-2xl mb-6 text-center text-white text-bold mt-5'> 
 						The 20th Annual Meeting of the Operations Research Society of Taiwan (ORSTW 2024)
+					</h3>
+
 					<h3 className='text-2xl mb-6 text-center text-white text-bold'>
 						2024年11月23-24日 <br/> 國立成功大學 
 					</h3>
@@ -56,10 +59,11 @@ export default function Home({ username, flavor, ticketNumber, burst }) {
 		{/* div in the middle but text is not in the middle */}
 		<div className='flex flex-col items-center justify-center p-10 md:px-0 md:w-3/5 md:mx-auto'>
 		<h1 className='text-3xl font-bold mb-6 text-purple-500'>主題</h1>
-		<h2 className='animate-fade-in-up text-6xl md:text-[80px] mx-auto text-center max-w-[20ch] text-white font-bold pt-40'>
-			Innovating for a Sustainable Future: <br/>
-			OR in the Era of Digital Transformation</h2>
-		<p className='text-xl font-bold mb-6 text-gray-200'>
+		<h2 className='text-2xl md:text-5xl lg:text-6xl mx-auto text-center max-w-[30ch] text-white font-bold pt-10 leading-tight'>
+  			<span className="block mt-5 mb-3">Innovating for a Sustainable Future:</span>
+  			<span className="block">OR in the Era of Digital Transformation</span>
+		</h2>
+		<p className='text-xl font-bold mt-10 text-gray-200'>
 			ORSTW2024 brings together researchers, practitioners, and decision-makers to share cutting-edge research, innovative applications, and emerging trends in Operations Research and related fields. We welcome contributions in areas including but not limited to:<br/>
 			• Optimization and Mathematical Programming <br/>
 			• Stochastic Modeling and Simulation <br/>
@@ -131,8 +135,12 @@ export default function Home({ username, flavor, ticketNumber, burst }) {
         <section id="submission">
 			<div className='flex flex-col items-center justify-center p-10 md:px-0 md:w-3/5 md:mx-auto'>
 			<h1 className='text-3xl font-bold mb-6 text-purple-500'>投稿</h1>
-			<p className='text-xl font-bold mb-6 text-gray-200'>
-				<a href="https://www.dropbox.com/scl/fi/t6nzmyj8nek1bcgtl39zi/ORSTW2020_abstract_format.doc?rlkey=q27bj7bylg5cr5g0cv8y2ydg2&e=1&dl=0"> 摘要格式 </a>
+			<p class="text-xl mt-6 mb-6 text-white">
+			本研討會接受摘要投稿(中、英文皆可)，投稿時或經審查後獲本研討會接受之摘要，煩請務必依照本格式進行編排。論文請一律選用A4版面繕打，版面設定每頁上下左右邊界各留2.5公分並請左右對齊。中文文字全部採用標楷體、英文文字全部採用Times New Roman，內文字型大小均為12 pt。摘要以不超過500字為原則。系統收到摘要稿件後，會在本業的 admin 看到論文編號，後續的聯繫請提供論文編號以加快處理速度。文稿請勿插入頁碼，並請於截稿日前至論文投搞系統完成上傳。
+			研討會論文摘要格式樣板檔案如下： ( The template for the conference abstract is as follows: )
+			</p>
+			<p className='text-xl font-bold text-purple-300'>
+				<a href="https://www.dropbox.com/scl/fi/t6nzmyj8nek1bcgtl39zi/ORSTW2020_abstract_format.doc?rlkey=q27bj7bylg5cr5g0cv8y2ydg2&e=1&dl=0"> 摘要格式範例 </a>
 			</p>
 			</div>
 			<TicketHome ticketNumber={ticketNumber} initialFlavor={flavor} username={username} />

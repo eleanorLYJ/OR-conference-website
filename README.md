@@ -11,4 +11,9 @@ The website is developed using Next.js and aims to inform attendees and the comm
 - docker, docker-compose
 
 ## how to start
-`sudo docker compose up --bulid`
+
+1. Modify the file name of .env.local.example to .env.local
+2. Modify the content of .env.local
+3. Enter `sudo docker compose up --bulid` in the terminal
+4. After the website is successfully built, enter `http://localhost:3000/api/init` to create two neccessary tables
+5. The website is now functioning properly

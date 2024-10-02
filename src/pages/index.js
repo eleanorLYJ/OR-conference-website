@@ -2,37 +2,24 @@ import Head from 'next/head'
 import { GeistSans } from 'geist/font/sans'
 import { Countdown } from '@/components/Countdown'
 import { Header } from '@/components/Header'
-import { TicketHome } from '@/components/ticket-home'
 import { PageBackground } from '@/components/PageBackground'
 import { Footer } from '@/components/Footer'
-const PREFIX_CDN = 'https://ljizvfycxyxnupniyyxb.supabase.co/storage/v1/object/public/tickets'
 
-const title = 'ORSTW 2024'
-const description =	'The 2024 International Conference and the 20th Annual Meeting of the Operations Research Society of TAIWAN (ORSTW 2024)'
-const defaultOgImage = '/og-image.jpg'
-const url = ''  // todo
+const title = '2024年工業工程與管理學門成果發表'
+const description =	'2024年工業工程與管理學門成果發表'
 
-export default function Home({ username, flavor, ticketNumber, burst }) {
+export default function Home({ }) {
 	// if we have a username, we use the ticket image, otherwise we use the default og image
-	const ogImage = username
-		? `${PREFIX_CDN}/ticket-${ticketNumber}.jpg?c=${burst}`
-		: `${url}${defaultOgImage}`
 
 	return (
 		<>
 			<Head>
-				<title>ORSTW 2024</title>
+				<title>2024工工學門</title>
 				<meta name='description' content={description} />
-				<meta property='og:image' content={ogImage} />
-				<meta property='twitter:image' content={ogImage} />
 				<meta property='og:title' content={title} />
 				<meta property='twitter:title' content={title} />
 				<meta property='og:description' content={description} />
 				<meta property='twitter:description' content={description} />
-				<meta property='og:url' content={url} />
-				<meta property='twitter:url' content={url} />
-				<meta property='og:type' content='website' />
-				<meta property='twitter:card' content='summary_large_image' />
 				<link rel='icon' href='/favicon.svg' />
 			</Head>
 
@@ -40,113 +27,75 @@ export default function Home({ username, flavor, ticketNumber, burst }) {
 			<main className={`${GeistSans.className}`}>
     	    <PageBackground>
 				<div className='max-w-5xl mx-auto'>
-					<h2 className='animate-fade-in-up text-6xl md:text-[80px] mx-auto text-center max-w-[20ch] text-white font-bold pt-40'>
-						第 20 屆台灣作業研究學會年會暨學術研討會 
+					<h2 className='animate-fade-in-up text-6xl md:text-[80px] mx-auto text-center max-w-[20ch] text-white font-bold pt-40 mb-4'>
+						2024e國科會工程處工業工程與管理學門專題計畫研究成果發表會
 					</h2>
-					<h3 className='animate-fade-in-up text-2xl mb-6 text-center text-white text-bold mt-5'> 
-						The 20th Annual Meeting of the Operations Research Society of Taiwan (ORSTW 2024)
-					</h3>
 
 					<h3 className='text-2xl mb-6 text-center text-white text-bold'>
-						2024年11月23-24日 <br/> 國立成功大學 
+						2024 年 11 月 23 日 <br/> 國立成功大學管理學院 工業與資訊管理學系
 					</h3>
 				</div>
 			</PageBackground>
+		<section id="intro" >
+			<div className='flex flex-col items-center justify-center text-white text-xl p-10 md:px-0 md:w-3/5 md:mx-auto'>
+				本年度工業工程與管理學門成果發表會將於11/23(六)由成大工資管系舉辦。主要目的在於促進產學專家之交流，
+				深入探討工業工程與管理重要議題。
+				會議亦安排產、官、學、研各領域的專家對工業工程與管理相關領域之研究成果及國內重要議題進行心得分享與專業交流，
+				期能增進專題計畫研發成效與擴展產學計畫的廣度。
+				<img src="/IIM_logo.jpg" className="mt-10"sizes="(max-width: 1024px) 100vw, 1024px" alt="112年度國科會工工學門成果發表會於113年11月23日星期六舉行，地點：國立成功大學管理學院" />
+			</div>
+		</section>
 
-
-
-        <section id="topic" >
-		{/* div in the middle but text is not in the middle */}
-		<div className='flex flex-col items-center justify-center p-10 md:px-0 md:w-3/5 md:mx-auto'>
-		<h1 className='text-3xl font-bold mb-6 text-purple-500'>主題</h1>
-		<h2 className='text-2xl md:text-5xl lg:text-6xl mx-auto text-center max-w-[30ch] text-white font-bold pt-10 leading-tight'>
-  			<span className="block mt-5 mb-3">Innovating for a Sustainable Future:</span>
-  			<span className="block">OR in the Era of Digital Transformation</span>
-		</h2>
-		<p className='text-xl font-bold mt-10 text-gray-200'>
-			ORSTW2024 brings together researchers, practitioners, and decision-makers to share cutting-edge research, innovative applications, and emerging trends in Operations Research and related fields. We welcome contributions in areas including but not limited to:<br/>
-			• Optimization and Mathematical Programming <br/>
-			• Stochastic Modeling and Simulation <br/>
-			• Data Analytics and Machine Learning <br/>
-			• Supply Chain Management and Logistics <br/>
-			• Healthcare Systems and Operations <br/>	
-			• Sustainable Operations and Green Technologies <br/>
-			• Financial Engineering and Risk Management <br/>
-			• Energy Systems and Smart Grids <br/>
-			• Transportation and Network Analysis <br/>
-			• Decision Support Systems And Management <br/>
-			• Industry 4.0 and Smart Manufacturing <br/>
-			</p>
-		</div>
-        </section>
 		<section id="agenda" >
 		<div className='flex flex-col items-center justify-center p-10 md:px-0 md:w-3/5 md:mx-auto'>
 			<h1 className='text-3xl font-bold mb-6 text-purple-500'>議程</h1>
 		</div>
 		</section>
  
-		<section id="organization">
-		<div className='flex flex-col items-center justify-center p-10 md:px-0 md:w-3/5 md:mx-auto'>
-		<h1 className='text-3xl font-bold mb-6 text-purple-500'>大會組織</h1>
-		</div>
-        </section>
-
 		<section id="transportation">
 		<div className='flex flex-col items-center justify-center p-10 md:px-0 md:w-3/5 md:mx-auto'>
 		<h1 className='text-3xl font-bold mb-6 text-purple-500'>交通資訊</h1>
-			<h2>會場地點：國立成功大學 校區 </h2>
-		
+			<h2 className='text-2xl text-white'>會場地點：國立成功大學光復校區管理學院</h2>
 		</div>
-        </section>
+		<div className='p-10 md:px-0 md:w-3/5 md:mx-auto'>
+		 <h2 className='text-2xl mb-3 text-white text-bold'>1. 搭乘公共運輸工具</h2>
 
-		<section id="schedule">
-		<div className='flex flex-col items-center justify-center p-10 md:px-0 md:w-2/5 md:mx-auto'>
-		<h1 className='text-3xl font-bold mb-6 text-purple-500'>重要日程</h1>
-		
-		<table className='w-full text-gray-200 mb-6'>
-			<thead>
-				<tr>
-				<th className='text-left'>日期</th>
-				<th className='text-left'>事件</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-				<td>09/27</td>
-				<td>Abstract Submission Deadline</td>
-				</tr>
-				<tr>
-				<td>10/11</td>
-				<td>Notification of Acceptance</td>
-				</tr>
-				<tr>
-				<td>10/18</td>
-				<td>Registration Deadline</td>
-				</tr>
-				<tr>
-				<td>11/23-24</td>
-				<td>Conference Dates</td>
-				</tr>		
-			</tbody>
-		</table>
+		<h3 className='text-xl text-white text-bold'>搭乘高鐵至高鐵台南站</h3>
+		<div className='text-white mb-3 '>
+			<li className='p-4'>高鐵台南站下車至二樓轉乘通廊或一樓大廳1號出口前往台鐵沙崙站，搭乘台鐵沙崙區間車前往台鐵台南站，抵達台鐵台南站至後站出口，沿大學路步行至成功大學光復校區管理學院。</li>
+			<li className='p-4'>從高鐵台南站搭乘計程車直達成功大學光復校區管理學院。</li>
 		</div>
-        </section>
+		<h3 className='text-xl text-white text-bold'>搭乘火車至台南火車站</h3>
+		<div className='text-white mb-3 '>
+			<li className='p-4'>抵達台鐵台南站至後站出口，沿大學路步行至成功大學光復校區管理學院。</li>
+		</div>
+		<h3 className='text-xl text-white text-bold'>客運</h3>
+		<div className='text-white mb-3 '>
+			<li className='p-4'>與會人員請於台南轉運站下車，搭乘計程車直達成功大學光復校區管理學院。</li>
+		</div>
+
+		<h2 className='text-2xl mb-3 text-white text-bold'>2. 自行開車</h2>
+		<div className='text-white mb-3 '>
+			<h3 className='text-xl mb-3'>中山高速公路（國道一號）</h3>
+			<li className='p-4'>南下與會人員：沿國道一號南下→下永康交流道右轉→沿中正北路、中正南路(南向)往台南市區直行→中華路左轉→沿中華東路前進→於小東路口右轉→沿小東路前進→勝利路左轉→大學路右轉，右方即可進入本校光復校區。
+			【自國道三號南下者，轉國道8號（西向），可接國道一號（南向）】</li>
+			<li className='p-4'>北上與會人員：沿國道一號北上→下仁德交流道左轉→沿東門路(西向)往台南市區直走→遇長榮路右轉(北向)→沿長榮路前進→大學路左轉，右方即可進入本校光復校區。
+			【自國道三號北上者，轉86號快速道路（西向），可接國道一號（北向）】</li>
+		</div>
+		<h3 className='text-xl text-white mb-3'>停車資訊</h3>
+			<li className="text-white p-4"><a target="_blank" href="https://serv-oga.ncku.edu.tw/p/412-1057-27798.php?Lang=zh-tw" rel="noopener">校園停車場位置圖 (ncku.edu.tw)</a></li>
+		</div>
+		</section>
 
         <section id="submission">
 			<div className='flex flex-col items-center justify-center p-10 md:px-0 md:w-3/5 md:mx-auto'>
-			<h1 className='text-3xl font-bold mb-6 text-purple-500'>投稿</h1>
-			<p class="text-xl mt-6 mb-6 text-white">
-			本研討會接受摘要投稿(中、英文皆可)，投稿時或經審查後獲本研討會接受之摘要，煩請務必依照本格式進行編排。論文請一律選用A4版面繕打，版面設定每頁上下左右邊界各留2.5公分並請左右對齊。中文文字全部採用標楷體、英文文字全部採用Times New Roman，內文字型大小均為12 pt。摘要以不超過500字為原則。系統收到摘要稿件後，會在本業的 admin 看到論文編號，後續的聯繫請提供論文編號以加快處理速度。文稿請勿插入頁碼，並請於截稿日前至論文投搞系統完成上傳。
-			研討會論文摘要格式樣板檔案如下： ( The template for the conference abstract is as follows: )
-			</p>
-			<p className='text-xl font-bold text-purple-300'>
-				<a href="https://www.dropbox.com/scl/fi/t6nzmyj8nek1bcgtl39zi/ORSTW2020_abstract_format.doc?rlkey=q27bj7bylg5cr5g0cv8y2ydg2&e=1&dl=0"> 摘要格式範例 </a>
-			</p>
+			<h1 className='text-3xl font-bold mb-6 text-purple-500'>報名</h1>
+
+			<a href="https://docs.google.com/forms/d/e/1FAIpQLScHXzMyMAZRvjuiaE5u23T_p0Mfv-_jnuVZHyREbSS3qsOb4Q/viewform?usp=sf_link" className="text-xl mt-6 text-white underline">報名表單</a>
 			</div>
-			<TicketHome ticketNumber={ticketNumber} initialFlavor={flavor} username={username} />
 			<div className='flex flex-col items-center justify-center pt-10 md:px-0 md:w-3/5 md:mx-auto'>
 			<h3 className='text-3xl font-bold  text-gray-200'>
-				Submission countdown
+				報名截止日期: 2024.10.30，截止倒數 
 			</h3>
 			</div>
 			<Countdown />
@@ -154,10 +103,9 @@ export default function Home({ username, flavor, ticketNumber, burst }) {
 
         <section id="contact">
 		<div className='flex flex-col items-center justify-center p-10 md:px-0 md:w-3/5 md:mx-auto'>
-		<h1 className='text-3xl font-bold mb-6 text-purple-500'>聯絡</h1>
+		<h1 className='text-3xl font-bold mb-6 text-purple-500'>聯絡我們</h1>
 		<p className='text-xl font-bold mb-6 text-gray-200'>
-		Contact: orstw2024@gmail.com <br/>
-		Conference Website: http://orstw2024.iim.ncku.edu.tw/
+			如有任何問題，請聯絡: em53100@email.ncku.edu.tw <br/>
 		</p>
 		</div>
         </section>

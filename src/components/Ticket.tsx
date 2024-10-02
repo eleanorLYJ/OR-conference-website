@@ -55,7 +55,7 @@ export default function Ticket({
 		<div
 			id={id}
 			className={cn(
-				'block h-full overflow-hidden opacity-100 rounded-[60px] shadow-[inset_0_4px_30px] bg-transparent border p-5',
+				'block h-full overflow-hidden opacity-100 rounded-[60px] shadow-[inset_0_4px_30px] bg-transparent border ',
 				isSizeFixed ? 'aspect-[2/1] w-full' : 'aspect-none w-full md:aspect-[2/1]',
 				currentTicketStyles.borders.outside,
 				currentTicketStyles.shadowColor,

@@ -6,7 +6,7 @@ export function Footer() {
       <div className="container mx-auto text-center">
         <p className="mb-2">國立成功大學工業與資訊管理學系資訊管理研究所</p>
         <p className="mb-2">
-          701 台南市大學路1號 | (06) 2757575#53100 (XXX) | orstw2024@gmail.com
+          701 台南市大學路1號 | (06) 2757575#53100 | em53100@email.ncku.edu.tw
         </p>
         <p className="text-sm">
           Copyright © {new Date().getFullYear()} National Cheng Kung University ALL RIGHTS RESERVED

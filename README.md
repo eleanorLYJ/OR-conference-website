@@ -1,19 +1,20 @@
 # OR-conference-website
 
 ## Project Description
+This project is a modified version of the source code for the official website of **miduConf**.
 
-This project is modifed from the source code for the official website of **miduConf**.
-
-The website is developed using Next.js and aims to inform attendees and the community at large about the conference details, including speakers, schedule, and how to register for the event.
+The website is built with Next.js and serves to provide information to attendees and the community about the conference, including speakers, the schedule, and registration details.
 
 ## Prerequisites
+- Docker  
+- Docker Compose  
 
-- docker, docker-compose
-
-## how to start
-
-1. Modify the file name of .env.local.example to .env.local
-2. Modify the content of .env.local
-3. Enter `sudo docker compose up --bulid` in the terminal
-4. After the website is successfully built, enter `http://localhost:3000/api/init` to create two neccessary tables
-5. The website is now functioning properly
+## How to Start
+1. Rename `.env.local.example` to `.env.local`.  
+2. Edit `.env.local` and update its values accordingly.  
+3. Run the following command in the terminal:  
+   ```sh
+   sudo docker compose up --build
+ ```
+4. Once the website is successfully built, visit http://localhost:3000/api/init in your browser to create the required database tables.
+The website should now be running properly.

@@ -13,8 +13,8 @@ The website is built with Next.js and serves to provide information to attendees
 1. Rename `.env.local.example` to `.env.local`.  
 2. Edit `.env.local` and update its values accordingly.  
 3. Run the following command in the terminal:  
-   ```sh
+ ```sh
    sudo docker compose up --build
  ```
 4. Once the website is successfully built, visit http://localhost:3000/api/init in your browser to create the required database tables.
-The website should now be running properly.
+5. The website should now be running properly.
